@@ -368,7 +368,7 @@ public class ImageUtil {
 			}
 		}
 		String imageBase64 = getImageBASE64(targetImage);
-		if (imageBase64 != null) imageBase64 = "data:image/png;base64," + imageBase64;
+//		if (imageBase64 != null) imageBase64 = "data:image/png;base64," + imageBase64;
 		return imageBase64;
 	}
 	

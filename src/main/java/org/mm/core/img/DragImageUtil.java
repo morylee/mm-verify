@@ -163,60 +163,78 @@ public class DragImageUtil {
 	}
 	
 	/**
-	 * 
-	 * @Title: createImage
-	 * @Description: 获取大图，小图Base64码
+	 * 获取大图，小图
 	 * @param url
-	 * @return Map<String,String>
-	 * @throws
+	 * @param width
+	 * @param height
+	 * @return
 	 */
-	public static Map<String, Object> createImage(String url, int width, int height){
+	private static Map<String, Object> doCreateImage(String url) {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			BufferedImage bufferedImage = ImageIO.read(new FileInputStream(url));
 			CutPosParams params = getCutPosition(bufferedImage.getWidth(), bufferedImage.getHeight());
 			BufferedImage target= new BufferedImage(CUT_WIDTH, CUT_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 			cutImg(bufferedImage, target, getBlockData(), params.x, params.y);
-			resultMap.put("background", ImageUtil.getImageBASE64(bufferedImage)); // 大图
-			resultMap.put("dragBlock", ImageUtil.getImageBASE64(target)); // 小图
-			resultMap.put("x", params.x);
-			resultMap.put("y", params.y);
+			resultMap.put("background", bufferedImage); // 大图
+			resultMap.put("guide", target); // 小图
+			int[][] positions = new int[][]{{params.x, params.y}};
+			resultMap.put("p", positions);
+			resultMap.put("n", 1);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return resultMap;
 	}
 	
-	public static Map<String, Object> createImage(String url, int width, int height, int vCut, int hCut, boolean upset){
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-		try {
-			BufferedImage bufferedImage = ImageIO.read(new FileInputStream(url));
-			CutPosParams params = getCutPosition(bufferedImage.getWidth(), bufferedImage.getHeight());
-			BufferedImage target= new BufferedImage(CUT_WIDTH, CUT_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-			cutImg(bufferedImage, target, getBlockData(), params.x, params.y);
-			Integer[] upsetSeries = null;
-			if (upset) upsetSeries = ImageUtil.upsetNumbers(vCut * hCut);
-			resultMap.put("background", ImageUtil.imagePieces(bufferedImage, vCut, hCut, upsetSeries)); // 大图
-			resultMap.put("dragBlock", ImageUtil.getImageBASE64(target)); // 小图
-			resultMap.put("x", params.x);
-			resultMap.put("y", params.y);
-			resultMap.put("s", upsetSeries);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	/**
+	 * 
+	 * 获取大图，小图Base64码
+	 * @param url
+	 * @param width
+	 * @param height
+	 * @return Map<String, Object>
+	 * @throws
+	 */
+	public static Map<String, Object> createImage(String url){
+		Map<String, Object> resultMap = doCreateImage(url);
+		resultMap.put("background", ImageUtil.getImageBASE64((BufferedImage) resultMap.get("background"))); // 大图
+		resultMap.put("guide", ImageUtil.getImageBASE64((BufferedImage) resultMap.get("guide"))); // 小图
+		
+		return resultMap;
+	}
+	
+	/**
+	 * 获取打乱的大图
+	 * @param url
+	 * @param width
+	 * @param height
+	 * @param vCut
+	 * @param hCut
+	 * @param upset
+	 * @return
+	 */
+	public static Map<String, Object> createImage(String url, int vCut, int hCut, boolean upset){
+		Map<String, Object> resultMap = doCreateImage(url);
+		Integer[] upsetSeries = null;
+		if (upset) upsetSeries = ImageUtil.upsetNumbers(vCut * hCut);
+
+		resultMap.put("background", ImageUtil.imagePieces((BufferedImage) resultMap.get("background"), vCut, hCut, upsetSeries)); // 大图
+		resultMap.put("guide", ImageUtil.getImageBASE64((BufferedImage) resultMap.get("guide"))); // 小图
+		resultMap.put("s", upsetSeries);
 		return resultMap;
 	}
 	
 	public static void main(String[] args) {
-		Map<String, Object> res = createImage("D:\\personal\\images\\131.jpg", 100, 100);
+		Map<String, Object> res = createImage("D:\\personal\\images\\131.jpg");
 		String background = (String) res.get("background");
-		String dragBlock = (String) res.get("dragBlock");
+		String guide = (String) res.get("guide");
 		System.out.println("原图");
 		System.out.println("data:image/png;base64," + background);
 		System.out.println("小图");
-		System.out.println("data:image/png;base64," + dragBlock);
+		System.out.println("data:image/png;base64," + guide);
 //		ImageUtil.BASE64ToImage(background, "D:\\personal\\images\\131_origin.png");
-//		ImageUtil.BASE64ToImage(dragBlock, "D:\\personal\\images\\131_min.png");
+//		ImageUtil.BASE64ToImage(guide, "D:\\personal\\images\\131_min.png");
 		
 //		getCutPosition(500, 300);
 	}
