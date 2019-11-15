@@ -1,11 +1,14 @@
 package org.mm.core.img;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.mm.core.security.AesCoderUtil;
 import org.mm.core.security.Md5CoderUtil;
 import org.mm.core.security.RsaCoderUtil;
@@ -60,7 +63,8 @@ public class ImageCaptchaUtil {
 			
 			Integer[][] positions = (Integer[][]) resMap.get("positions");
 			resMap.remove("positions");
-			redisUtil.hset(captchaKey, "positions", positions);
+			String positionsStr = arr2JsonStr(positions);
+			redisUtil.hset(captchaKey, "positions", positionsStr);
 		}
 		
 		return resMap;
@@ -102,7 +106,8 @@ public class ImageCaptchaUtil {
 	}
 	
 	public static boolean verify(String key, int type, double[][] clientPositions) {
-		Integer[][] positions = (Integer[][]) redisUtil.hget(key, "positions");
+		String positionsStr = (String) redisUtil.hget(key, "positions");
+		Integer[][] positions = jsonStr2Arr(positionsStr);
 		if (positions.length != clientPositions.length) return false;
 		
 		int iconWidth = 0;
@@ -146,6 +151,7 @@ public class ImageCaptchaUtil {
 				return false;
 			}
 		}
+		redisUtil.del(key);
 		
 		return true;
 	}
@@ -167,11 +173,40 @@ public class ImageCaptchaUtil {
 				}
 			}
 			
-			return verify(rsaPriKey, type, clientPoss);
+			return verify(key, type, clientPoss);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public static String arr2JsonStr(Integer[][] array) {
+		JSONArray jsonArray = new JSONArray();
+		for (int i = 0; i < array.length; i++) {
+			JSONArray jsonArray2 = new JSONArray(Arrays.asList(array[i]));
+			jsonArray.put(jsonArray2);
+		}
+		return jsonArray.toString();
+	}
+	
+	public static Integer[][] jsonStr2Arr(String jsonStr) {
+		Integer[][] array = new Integer[][]{};
+		try {
+			JSONArray jsonArray = new JSONArray(jsonStr);
+			array = new Integer[jsonArray.length()][];
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONArray jsonArray2 = jsonArray.getJSONArray(i);
+				Integer[] array2 = new Integer[jsonArray2.length()];
+				for (int j = 0; j < jsonArray2.length(); j++) {
+					array2[j] = jsonArray2.getInt(j);
+				}
+				array[i] = array2;
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return array;
 	}
 
 }

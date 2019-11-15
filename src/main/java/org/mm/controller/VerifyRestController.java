@@ -4,14 +4,13 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.mm.core.img.ImageCaptchaUtil;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 
 @RestController
 @RequestMapping("/verify")
@@ -31,11 +30,11 @@ public class VerifyRestController extends BaseRestController {
 		try {
 			String key = json.getString("key");
 			JSONArray array = json.getJSONArray("clientPositions");
-			String[][] positions = new String[array.size()][];
-			for (int i = 0; i < array.size(); i++) {
+			String[][] positions = new String[array.length()][];
+			for (int i = 0; i < array.length(); i++) {
 				JSONArray xy = array.getJSONArray(i);
-				String[] position = new String[xy.size()];
-				for (int j = 0; j < xy.size(); j++) {
+				String[] position = new String[xy.length()];
+				for (int j = 0; j < xy.length(); j++) {
 					position[j] = xy.getString(j);
 				}
 				positions[i] = position;
