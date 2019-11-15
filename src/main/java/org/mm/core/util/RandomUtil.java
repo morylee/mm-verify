@@ -1,4 +1,4 @@
-package org.mm.core.img;
+package org.mm.core.util;
 
 import java.util.Random;
 

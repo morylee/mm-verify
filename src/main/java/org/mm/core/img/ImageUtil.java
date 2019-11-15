@@ -25,10 +25,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -47,8 +43,8 @@ public class ImageUtil {
 	
 	static {
 		try {
-			shadowImage = ImageIO.read(ImageUtil.class.getResourceAsStream("/shadow.png"));
-			backGroundImage = ImageIO.read(ImageUtil.class.getResourceAsStream("/white.png"));
+			shadowImage = ImageIO.read(ImageUtil.class.getResourceAsStream("/images/shadow.png"));
+			backGroundImage = ImageIO.read(ImageUtil.class.getResourceAsStream("/images/white.png"));
 			resizeBaseSize = shadowImage.getWidth();
 		} catch (IOException e) {
 		}
@@ -168,7 +164,7 @@ public class ImageUtil {
 		return outputImage;
 	}
 
-	private static BufferedImage scaleImage(BufferedImage image, int targetSize) {
+	public static BufferedImage scaleImage(BufferedImage image, int targetSize) {
 		AffineTransform affineTransform = new AffineTransform();
 		affineTransform.setToScale(targetSize * 1f / image.getWidth(), targetSize * 1f / image.getHeight());
 		AffineTransformOp affineTransformOp = new AffineTransformOp(
@@ -363,8 +359,8 @@ public class ImageUtil {
 			for (int j = 0; j < h; j++) {
 				int _x = x + i;
 				int _y = y + j;
-				int rgb_img = image.getRGB(_x, _y);
-				targetImage.setRGB(i, j, rgb_img);
+				int rgbImg = image.getRGB(_x, _y);
+				targetImage.setRGB(i, j, rgbImg);
 			}
 		}
 		String imageBase64 = getImageBASE64(targetImage);
@@ -415,24 +411,5 @@ public class ImageUtil {
 		
 		return imageBase64s;
 	}
-	
-	public static Integer[] upsetNumbers(int numbers) {
-		List<Integer> numberArr = new ArrayList<Integer>();
-		for (int i = 0; i < numbers; i++) {
-			numberArr.add(i);
-		}
-		return upsetNumbers(numberArr);
-	}
-	
-	public static Integer[] upsetNumbers(Integer[] numbers) {
-		List<Integer> numberArr = Arrays.asList(numbers);
-		return upsetNumbers(numberArr);
-	}
-	
-	public static Integer[] upsetNumbers(List<Integer> numbers) {
-		Collections.shuffle(numbers);
-		Integer[] newNumbers = new Integer[numbers.size()];
-		newNumbers = numbers.toArray(newNumbers);
-		return newNumbers;
-	}
+
 }

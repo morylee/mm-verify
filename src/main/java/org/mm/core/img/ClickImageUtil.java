@@ -1,23 +1,34 @@
 package org.mm.core.img;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.mm.core.util.ArrayUtil;
+import org.mm.core.util.RandomUtil;
 
 public class ClickImageUtil {
 
+	private static final int ICON_WIDTH = 30;
+	private static final int ICON_HEIGHT = 30;
+	
+	public static final int getIconWidth() {
+		return ICON_WIDTH;
+	}
+	
+	public static final int getIconHeight() {
+		return ICON_HEIGHT;
+	}
+	
 	enum Icon {
-		Star(0, "星星", "/starIcon.png"), Triangle(1, "三角形", "/triangleIcon.png"),
-		Square(2, "正方形", "/squareIcon.png"), Circular(3, "圆形", "/circularIcon.png"),
-		Cloud(4, "云朵", "/cloudIcon.png"), Rhombus(5, "菱形", "/rhombusIcon.png"),
-		Heart(6, "心形", "/heartIcon.png");
+		Star(0, "星星", "/images/starIcon.png"), Triangle(1, "三角形", "/images/triangleIcon.png"),
+		Square(2, "正方形", "/images/squareIcon.png"), Circular(3, "圆形", "/images/circularIcon.png"),
+		Cloud(4, "云朵", "/images/cloudIcon.png"), Rhombus(5, "菱形", "/images/rhombusIcon.png"),
+		Heart(6, "心形", "/images/heartIcon.png");
 		
 		int value;
 		String name;
@@ -49,53 +60,56 @@ public class ClickImageUtil {
 		}
 	}
 	
-	public static void drawImg(BufferedImage oriImage, BufferedImage[] icons, int[][] posXY) {
-		if (posXY == null || posXY.length != icons.length) return;
+	public static void drawImg(BufferedImage oriImage, BufferedImage[] icons, Integer[][] posXY) {
+		if (posXY == null || posXY.length != icons.length) {
+			throw new RuntimeException("positions size not equal icons size");
+		}
 		
+		BufferedImage icon;
+		int w, h, x, y, rgbIcon;
 		for (int iconInd = 0; iconInd < icons.length; iconInd++) {
-			BufferedImage icon = icons[iconInd];
-			int w = posXY[iconInd][0];
-			int h = posXY[iconInd][1];
+			icon = icons[iconInd];
+			w = posXY[iconInd][0];
+			h = posXY[iconInd][1];
 			for (int i = 0; i < icon.getWidth(); i++) {
 				for (int j = 0; j < icon.getHeight(); j++) {
-					int x = w + i;
-					int y = h + j;
-					int rgb_icon = icon.getRGB(i, j);
-					if ((rgb_icon & 0xFF000000) < 0) {
-						oriImage.setRGB(x, y, rgb_icon);
+					x = w + i;
+					y = h + j;
+					rgbIcon = icon.getRGB(i, j);
+					if ((rgbIcon & 0xFF000000) < 0) {
+						oriImage.setRGB(x, y, rgbIcon);
 					}
 				}
 			}
 		}
 	}
 	
-	// TODO check background img size
-	public static int[][] getPositions(int w, int h, int[][] iconSizes) {
-		int iconTotalArea = 0;
-		for (int[] iconSize: iconSizes) {
-			iconTotalArea += iconSize[0] * iconSize[1];
+	public static Integer[][] getPositions(int w, int h, int n) {
+		if (5 * n * ICON_WIDTH * ICON_HEIGHT > w * h) {
+			throw new RuntimeException("background image too small");
 		}
-		if (iconTotalArea * 5 > w * h) return null;
 		
-		int[][] positions = new int[iconSizes.length][2];
+		Integer[][] positions = new Integer[n][2];
 		
-		for (int i = 0; i < iconSizes.length; i++) {
-			int[] iconSize = iconSizes[i];
-			int iconW = iconSize[0];
-			int iconH = iconSize[1];
-			boolean tooClose = false;
+		boolean tooClose;
+		int posX, posY, px, py;
+		Integer[] position;
+		for (int i = 0; i < n; i++) {
+			tooClose = false;
 			do {
-				int posX = RandomUtil.randomInt(10, w - 10 - iconW);
-				int posY = RandomUtil.randomInt(10, h - 10 - iconH);
+				posX = RandomUtil.randomInt(10, w - 10 - ICON_WIDTH);
+				posY = RandomUtil.randomInt(10, h - 10 - ICON_HEIGHT);
 				for (int j = 0; j < positions.length; j++) {
-					int[] position = positions[j];
-					if (position[0] - iconW <= posX && position[0] + iconSizes[j][0] >= posX
-						&& position[1] - iconH <= posY && position[1] + iconSizes[j][1] >= posY) {
+					position = positions[j];
+					px = position[0] == null ? 0 : position[0];
+					py = position[1] == null ? 0 : position[1];
+					if (px - ICON_WIDTH <= posX && px + ICON_WIDTH >= posX
+						&& py - ICON_HEIGHT <= posY && py + ICON_HEIGHT >= posY) {
 						tooClose = true;
 						break;
 					}
 				}
-				if (!tooClose) positions[i] = new int[]{posX, posY};
+				if (!tooClose) positions[i] = new Integer[]{posX, posY};
 			} while (tooClose);
 		}
 		
@@ -104,7 +118,7 @@ public class ClickImageUtil {
 	
 	public static Icon[] getIcons(int n) {
 		int iconTotal = Icon.values().length;
-		Integer[] upsetNumbers = ImageUtil.upsetNumbers(iconTotal);
+		Integer[] upsetNumbers = ArrayUtil.upsetNumbers(iconTotal);
 		if (n > iconTotal) n = iconTotal;
 		Icon[] icons = new Icon[n];
 		for (int i = 0; i < n; i++) {
@@ -114,44 +128,56 @@ public class ClickImageUtil {
 		return icons;
 	}
 	
+	public static BufferedImage getIconImage(Icon icon) throws IOException {
+		BufferedImage iconImg = ImageIO.read(ImageUtil.class.getResourceAsStream(icon.imgName));
+		if (iconImg.getWidth() != ICON_WIDTH || iconImg.getHeight() != ICON_HEIGHT) {
+			return ImageUtil.scaleImage(iconImg, ICON_WIDTH);
+		} else {
+			return iconImg;
+		}
+	}
+	
 	/**
 	 * 创建图片
 	 * @param url
 	 * @param n
-	 * @return
+	 * @return Map<String, Object> {
+	 *     background: 主图 BufferedImage,
+	 *     guide: 提示文字,
+	 *     positions: [[icon 在主图中的坐标]],
+	 *     times: icon 个数
+	 * }
 	 */
 	private static Map<String, Object> doCreateImage(String url, int n) {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			BufferedImage bufferedImage = ImageIO.read(new FileInputStream(url));
+			
 			Icon[] icons = getIcons(n);
 			n = icons.length;
 			BufferedImage[] iconImgs = new BufferedImage[n];
-			int[][] iconSizes = new int[n][2];
 			StringBuffer sb = new StringBuffer();
 			sb.append("请依次点击：");
+			Icon icon;
 			for (int i = 0; i < n; i++) {
-				Icon icon = icons[i];
-				BufferedImage iconImg = ImageIO.read(ImageUtil.class.getResourceAsStream(icon.imgName));
-				iconImgs[i] = iconImg;
-				iconSizes[i][0] = iconImg.getWidth();
-				iconSizes[i][1] = iconImg.getHeight();
+				icon = icons[i];
+				iconImgs[i] = getIconImage(icon);
 				sb.append(icon.name);
 				if (i < n - 1) sb.append(",");
 			}
-			int[][] posXY = getPositions(bufferedImage.getWidth(), bufferedImage.getHeight(), iconSizes);
+			Integer[][] posXY = getPositions(bufferedImage.getWidth(), bufferedImage.getHeight(), n);
 			drawImg(bufferedImage, iconImgs, posXY);
 			
-			resultMap.put("background", bufferedImage);
+			resultMap.put("background", bufferedImage); // 主图
 			if (posXY == null || posXY.length != iconImgs.length) {
-				resultMap.put("guide", "生成失败");
-				resultMap.put("n", n);
+				throw new RuntimeException("draw image falied");
 			} else {
-				resultMap.put("guide", sb.toString());
-				resultMap.put("p", posXY);
-				resultMap.put("n", posXY.length);
+				resultMap.put("guide", sb.toString()); // 操作提示
+				resultMap.put("times", posXY.length); // 操作次数
+				resultMap.put("positions", posXY); // icon在主图的坐标
 			}
 		} catch (IOException e) {
+			resultMap.clear();
 			e.printStackTrace();
 		}
 		
@@ -162,7 +188,12 @@ public class ClickImageUtil {
 	 * 创建图片Base64
 	 * @param url
 	 * @param n
-	 * @return
+	 * @return Map<String, Object> {
+	 *     background: 主图 Base64,
+	 *     guide: 提示文字,
+	 *     positions: [[icon 在主图中的坐标]],
+	 *     times: icon 个数
+	 * }
 	 */
 	public static Map<String, Object> createImage(String url, int n) {
 		Map<String, Object> resultMap = doCreateImage(url, n);
@@ -178,20 +209,22 @@ public class ClickImageUtil {
 	 * @param vCut
 	 * @param hCut
 	 * @param upset
-	 * @return
+	 * @return Map<String, Object> {
+	 *     background: [主图分片 Base64],
+	 *     guide: 提示文字,
+	 *     series: [主图分片顺序],
+	 *     positions: [[icon 在主图中的坐标]],
+	 *     times: icon 个数
+	 * }
 	 */
 	public static Map<String, Object> createImage(String url, int n, int vCut, int hCut, boolean upset) {
 		Map<String, Object> resultMap = doCreateImage(url, n);
 		Integer[] upsetSeries = null;
-		if (upset) upsetSeries = ImageUtil.upsetNumbers(vCut * hCut);
+		if (upset) upsetSeries = ArrayUtil.upsetNumbers(vCut * hCut);
 
 		resultMap.put("background", ImageUtil.imagePieces((BufferedImage) resultMap.get("background"), vCut, hCut, upsetSeries));
-		resultMap.put("s", upsetSeries);
+		resultMap.put("series", upsetSeries); // 主图打乱的顺序
 		return resultMap;
 	}
-	
-	public static void main(String[] args) throws FileNotFoundException, IOException {
-		Map<String, Object> resultMap = doCreateImage("D:/personal/images/captcha/131.png", 3);
-		ImageIO.write((BufferedImage) resultMap.get("background"), "png", new File("D:/personal/images/captcha/131_copy.png"));
-	}
+
 }

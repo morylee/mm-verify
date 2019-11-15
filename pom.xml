@@ -1,25 +1,183 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.mm</groupId>
-  <artifactId>mm-verify</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
+	<groupId>org.mm</groupId>
+	<artifactId>mm-verify</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
-  <name>mm-verify</name>
-  <url>http://maven.apache.org</url>
+	<name>mm-verify</name>
+	<url>http://maven.apache.org</url>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<springframework.boot.version>2.2.1.RELEASE</springframework.boot.version>
+		<mysql.version>8.0.18</mysql.version>
+		<projectlombok.version>1.16.20</projectlombok.version>
+		<log4j-over-slf4j.version>2.0.0-alpha1</log4j-over-slf4j.version>
+		<alibaba.druid.version>1.1.12</alibaba.druid.version>
+		<alibaba.fastjson.version>1.2.47</alibaba.fastjson.version>
+		<apache.commons.codec.version>1.8</apache.commons.codec.version>
+		<google.code.gson.version>2.8.2</google.code.gson.version>
+		<commons-lang3.version>3.4</commons-lang3.version>
+		<commons-io.version>2.4</commons-io.version>
+		<tomcat-embed-jasper.version>9.0.27</tomcat-embed-jasper.version>
+		<jstl.version>1.2</jstl.version>
+		<javax.servlet-api.version>4.0.1</javax.servlet-api.version>
+	</properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${springframework.boot.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<version>${springframework.boot.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- 热部署依赖 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<version>${springframework.boot.version}</version>
+			<optional>true</optional>
+		</dependency>
+		
+		<!-- 模板引擎依赖 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+			<version>${springframework.boot.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+			<version>${springframework.boot.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>io.lettuce</groupId>
+					<artifactId>lettuce-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		
+		<!-- mysql的依赖-->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<!-- get/set依赖 -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${projectlombok.version}</version>
+		</dependency>
+		
+		<!-- 日志依赖 -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<version>${log4j-over-slf4j.version}</version>
+		</dependency>
+		
+		<!-- 阿里巴巴druid数据源依赖 -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>${alibaba.druid.version}</version>
+		</dependency>
+		
+		<!-- Base64编码需要 -->
+		<dependency>
+			<groupId>org.apache.directory.studio</groupId>
+			<artifactId>org.apache.commons.codec</artifactId>
+			<version>${apache.commons.codec.version}</version>
+		</dependency>
+		
+		<!-- 阿里巴巴fastjson依赖 -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>${alibaba.fastjson.version}</version>
+		</dependency>
+		
+		<!-- 谷歌gson依赖 -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${google.code.gson.version}</version>
+		</dependency>
+		
+		<!-- 工具包依赖 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang3.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+		</dependency>
+		
+		<!-- 使用jasper引擎解析jsp -->
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+			<version>${tomcat-embed-jasper.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- jsp标签库 -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${jstl.version}</version>
+		</dependency>
+		
+		<!-- servlet 依赖 -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${javax.servlet-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
