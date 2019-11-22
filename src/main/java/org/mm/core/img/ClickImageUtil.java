@@ -1,7 +1,6 @@
 package org.mm.core.img;
 
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -151,7 +150,7 @@ public class ClickImageUtil {
 	private static Map<String, Object> doCreateImage(String url, int n) {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			BufferedImage bufferedImage = ImageIO.read(new FileInputStream(url));
+			BufferedImage bufferedImage = ImageUtil.readImageFile(url);
 			
 			Icon[] icons = getIcons(n);
 			n = icons.length;

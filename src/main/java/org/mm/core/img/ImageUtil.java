@@ -28,6 +28,8 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.lang3.StringUtils;
+
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -37,6 +39,8 @@ import static org.mm.core.img.ImageUtil.Policy.CropAtTop;
 @SuppressWarnings("restriction")
 public class ImageUtil {
 
+	private static String DEFAULT_BACKGROUND = "/images/background.png";
+	
 	private static BufferedImage shadowImage = null;
 	private static BufferedImage backGroundImage = null;
 	private static int resizeBaseSize = 1000;
@@ -310,6 +314,14 @@ public class ImageUtil {
 			return false;
 		}
 		return true;
+	}
+	
+	public static BufferedImage readImageFile(String url) throws IOException {
+		if (StringUtils.isBlank(url)) {
+			return ImageIO.read(ImageUtil.class.getResourceAsStream(DEFAULT_BACKGROUND));
+		} else {
+			return ImageIO.read(new FileInputStream(url));
+		}
 	}
 	
 	/**

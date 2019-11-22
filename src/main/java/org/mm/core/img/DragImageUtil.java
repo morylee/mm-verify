@@ -2,23 +2,20 @@ package org.mm.core.img;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 import org.mm.core.util.ArrayUtil;
 import org.mm.core.util.RandomUtil;
 
 public class DragImageUtil {
 
-	private static final int ICON_WIDTH = 100;
-	private static final int ICON_HEIGHT = 100;
-	private static final int CIRCLE_RADIUS = 12;
-	private static final int RECTANGLE_PADDING = 15;
-	private static final int SLIDER_IMG_OUT_PADDING = 1;
+	private static final int ICON_WIDTH = 60;
+	private static final int ICON_HEIGHT = 60;
+	private static final int CIRCLE_RADIUS = 7;
+	private static final int RECTANGLE_PADDING = 9;
+	private static final int SLIDER_IMG_OUT_PADDING = 2;
 	
 	public static final int getIconWidth() {
 		return ICON_WIDTH;
@@ -164,7 +161,7 @@ public class DragImageUtil {
 					//抠图上复制对应颜色值
 					targetImage.setRGB(i, j, rgbOri);
 					//原图对应位置颜色变化
-					oriImage.setRGB(_x, _y, Color.LIGHT_GRAY.getRGB());
+					oriImage.setRGB(_x, _y, Color.WHITE.getRGB());
 				} else if (rgb == 2) {
 					targetImage.setRGB(i, j, Color.WHITE.getRGB());
 					oriImage.setRGB(_x, _y, Color.GRAY.getRGB());
@@ -188,7 +185,7 @@ public class DragImageUtil {
 	private static Map<String, Object> doCreateImage(String url) {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			BufferedImage bufferedImage = ImageIO.read(new FileInputStream(url));
+			BufferedImage bufferedImage = ImageUtil.readImageFile(url);
 			CutPosParams params = getCutPosition(bufferedImage.getWidth(), bufferedImage.getHeight());
 			BufferedImage target= new BufferedImage(ICON_WIDTH, ICON_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 			cutImg(bufferedImage, target, getBlockData(), params.x, params.y);
