@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.mm.mapper.CaptchaMapper" >
+
+	<resultMap id="BaseResultMap" type="org.mm.model.Captcha" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="api_key" property="apiKey" jdbcType="VARCHAR" />
+		<result column="web_key" property="webKey" jdbcType="VARCHAR" />
+		<result column="_key" property="key" jdbcType="VARCHAR" />
+		<result column="sec_level" property="secLevel" jdbcType="INTEGER" />
+		<result column="sec_mode" property="secMode" jdbcType="INTEGER" />
+		<result column="verify_times" property="verifyTimes" jdbcType="INTEGER" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="BaseColumnList" >
+		id, api_key, web_key, _key, sec_level, sec_mode, verify_times, state, created_at, updated_at
+	</sql>
+	
+	<insert id="add" parameterType="org.mm.model.Captcha" useGeneratedKeys="true" keyProperty="id">
+		insert into mm_captcha (api_key, web_key, _key, sec_level, sec_mode, verify_times, state, created_at, updated_at)
+		values(#{apiKey}, #{webKey}, #{key}, #{secLevel}, #{secMode}, #{verifyTimes}, #{state}, sysdate(), sysdate())
+	</insert>
+	
+	<select id="update" parameterType="org.mm.model.Captcha">
+		update mm_captcha set
+			verify_times = #{verifyTimes},
+			state = #{state},
+			updated_at = sysdate()
+		where
+			_key = #{key}
+	</select>
+	
+	<select id="findByParams" resultMap="BaseResultMap" parameterType="java.util.Map" >
+		select
+		<include refid="BaseColumnList" />
+		from mm_captcha
+		<where>
+			<if test="key != null and key != ''">
+				_key = #{key}
+			</if>
+		</where>
+	</select>
+	
+</mapper>

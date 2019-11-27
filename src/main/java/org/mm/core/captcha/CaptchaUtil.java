@@ -1,4 +1,4 @@
-package org.mm.core.img;
+package org.mm.core.captcha;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,60 +15,59 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.mm.core.config.CaptchaConfig;
+import org.mm.core.exception.IllegalParameterException;
 import org.mm.core.security.AesCoderUtil;
 import org.mm.core.security.Base64CoderUtil;
 import org.mm.core.security.Md5CoderUtil;
 import org.mm.core.security.RsaCoderUtil;
 import org.mm.core.util.ClientKeyUtil;
+import org.mm.core.util.ImgCompressUtil;
 import org.mm.core.util.RandomUtil;
 import org.mm.core.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ImageCaptchaUtil {
+public class CaptchaUtil {
 
-	public enum CaptchaMode {
-		Auto(2), Drag(1), Click(0);
-		Integer value;
-		
-		CaptchaMode(Integer value) {
-			this.value = value;
-		}
-		public Integer getValue() {
-			return this.value;
-		}
-	}
+	private static String BASE_DIR;                                // 图库文件夹
+	private static String BASE_THEME;                              // 主题
+	private static String BASE_BACKGROUND;                         // 图片文件名
+	private static String BASE_IMG_TYPE;                           // 图片格式
 	
-	// TODO set from environment config
-	private static String BASE_DIR = "D:/personal/image_lib";
-	private static String BASE_THEME = "theme";
-	private static String BASE_BACKGROUND = "background";
-	private static String BASE_IMG_SUFFIX = "png";
+	public static final Integer DEFAULT_WIDTH = 300;               // 图片默认宽度
+	public static final Integer DEFAULT_HEIGHT = 160;              // 图片默认高度
+	private static final Integer DEFAULT_TIMES = 3;                // 用户操作次数
+	private static final Integer DEFAULT_V_CUT = 15;               // 纵切次数
+	private static final Integer DEFAULT_H_CUT = 3;                // 横切次数
+	private static final Boolean DEFAULT_UPSET = true;             // 是否打乱图片顺序
 	
-	public static final Integer DEFAULT_WIDTH = 300;
-	public static final Integer DEFAULT_HEIGHT = 160;
-	private static final Integer DEFAULT_TIMES = 3;
-	private static final Integer DEFAULT_V_CUT = 15;
-	private static final Integer DEFAULT_H_CUT = 3;
-	private static final Boolean DEFAULT_UPSET = true;
+	private static final double DRAG_ERROR_RATIO = 0.05;           // 拖拽验证失误范围比率
+	private static final double CLICK_ERROR_RATIO = 0.3;           // 点击验证失误范围比率
 	
-	private static final double DRAG_ERROR_RATIO = 0.03;
-	private static final double CLICK_ERROR_RATIO = 0.3;
-	
-	private static final Integer CAPTCHA_EXPIRE_SECONDS = 60 * 60;
-	private static final Integer TOKEN_EXPIRE_SECONDS = 60 * 5;
-	
-	private static final Integer MAX_ERROR_TIMES = 3;
+	private static Integer CAPTCHA_EXPIRE_SECONDS;                 // 验证码有效时间
+	private static Integer TOKEN_EXPIRE_SECONDS;                   // 验证码Token有效时间
+	private static Integer MAX_FAIL_TIMES;                         // 最大校验失败次数
 	
 	@Autowired
 	private RedisUtil redisUtilBean;
+	
+	@Autowired
+	private CaptchaConfig configBean;
 	
 	private static RedisUtil redisUtil;
 	
 	@PostConstruct
 	public void init() {
 		redisUtil = this.redisUtilBean;
+		BASE_DIR = configBean.imgBaseDir;
+		BASE_THEME = configBean.baseTheme;
+		BASE_BACKGROUND = configBean.baseBackground;
+		BASE_IMG_TYPE = configBean.baseImgType;
+		CAPTCHA_EXPIRE_SECONDS = configBean.expireSeconds;
+		TOKEN_EXPIRE_SECONDS = configBean.tokenExpireSeconds;
+		MAX_FAIL_TIMES = configBean.maxFailTimes;
 	}
 	
 	/**
@@ -90,9 +89,9 @@ public class ImageCaptchaUtil {
 		if (upset == null) upset = DEFAULT_UPSET;
 		
 		if (type.intValue() == CaptchaMode.Drag.getValue().intValue()) {
-			resMap = DragImageUtil.createImage(canvasPath, vCut, hCut, upset);
+			resMap = DragCaptchaUtil.createImage(canvasPath, vCut, hCut, upset);
 		} else {
-			resMap = ClickImageUtil.createImage(canvasPath, times, vCut, hCut, upset);
+			resMap = ClickCaptchaUtil.createImage(canvasPath, times, vCut, hCut, upset);
 		}
 		
 		if (resMap.isEmpty()) {
@@ -134,6 +133,7 @@ public class ImageCaptchaUtil {
 				String key = (String) resMap.get("key");
 				String aesKey = Md5CoderUtil.len16(key);
 				Integer iconY = (Integer) resMap.get("iconY");
+				String guide = (String) resMap.get("guide");
 				Integer cols = (Integer) resMap.get("cols");
 				Integer[] series = (Integer[]) resMap.get("series");
 				
@@ -142,7 +142,7 @@ public class ImageCaptchaUtil {
 				String pubKey = RsaCoderUtil.getPublicKey(rsaKeyMap);
 				
 				String encryptedPubKey = AesCoderUtil.encrypt(pubKey, aesKey);
-//				String encryptedGuide = RsaCoderUtil.priEncrypt(guide, priKey);
+				String encryptedGuide = RsaCoderUtil.priEncrypt(guide, priKey);
 				String encryptedCols = RsaCoderUtil.priEncrypt(cols.toString(), priKey);
 				String[] encryptedSeries = new String[series.length];
 				for (int i = 0; i < series.length; i++) {
@@ -151,6 +151,7 @@ public class ImageCaptchaUtil {
 				}
 				
 				resMap.put("rsaPubKey", encryptedPubKey);
+				resMap.put("guide", encryptedGuide);
 				resMap.put("cols", encryptedCols);
 				resMap.put("series", encryptedSeries);
 				if (iconY != null) {
@@ -171,23 +172,41 @@ public class ImageCaptchaUtil {
 	}
 	
 	/**
-	 * 检验验证码是否已失效
+	 * 验证码失效，最大验证次数以内不失效
 	 * @param key
 	 * @return
 	 */
-	public static boolean isExpire(String key) {
-		if (!redisUtil.hasKey(key)) return true;
+	public static void expire(String key) {
+		if (!redisUtil.hasKey(key)) return;
 		
 		Integer usedTimes = (Integer) redisUtil.hget(key, "times");
 		if (usedTimes == null) usedTimes = 0;
-		if (usedTimes.intValue() < MAX_ERROR_TIMES) {
-			usedTimes++;
+		usedTimes++;
+		if (usedTimes.intValue() < MAX_FAIL_TIMES) {
 			redisUtil.hset(key, "times", usedTimes);
 		} else {
-			redisUtil.del(key);
+			delete(key);
 		}
+	}
+	
+	/**
+	 * 检验验证码是否可用
+	 * @param key
+	 * @return
+	 */
+	public static boolean usable(String key) {
+		if (!redisUtil.hasKey(key)) return false;
+		Integer usedTimes = (Integer) redisUtil.hget(key, "times");
 		
-		return usedTimes.intValue() >= MAX_ERROR_TIMES;
+		return usedTimes == null || usedTimes < MAX_FAIL_TIMES;
+	}
+	
+	/**
+	 * 删除验证码信息
+	 * @param key
+	 */
+	public static void delete(String key) {
+		redisUtil.del(key);
 	}
 	
 	/**
@@ -197,53 +216,63 @@ public class ImageCaptchaUtil {
 	 * @return
 	 */
 	public static boolean verify(String key, double[][] clientPositions) {
-		Integer type = (Integer) redisUtil.hget(key, "type");
-		String positionsStr = (String) redisUtil.hget(key, "positions");
-		Integer[][] positions = jsonStr2Arr(positionsStr);
-		if (positions.length != clientPositions.length) return false;
-		
-		int iconWidth = 0;
-		int iconHeight = 0;
-		double radius = 0;
-		boolean iconCore = true;
-		switch (type) {
-		case 1:
-			iconWidth = DragImageUtil.getIconWidth();
-			iconHeight = DragImageUtil.getIconHeight();
-			radius = iconWidth * DRAG_ERROR_RATIO;
-			iconCore = false;
-			break;
-		default:
-			iconWidth = ClickImageUtil.getIconWidth();
-			iconHeight = ClickImageUtil.getIconHeight();
-			radius = iconWidth * CLICK_ERROR_RATIO;
-			break;
-		}
-		
-		for (int i = 0; i < positions.length; i++) {
-			Integer[] position = positions[i];
-			double[] clientPos = clientPositions[i];
-			if (position.length != clientPos.length) return false;
-			
-			int x = position[0];
-			int y = position[1];
-			int coreX = iconCore ? x + iconWidth / 2 : x;
-			int coreY = iconCore ? y + iconHeight / 2 : y;
-			
-			double clientX = clientPos[0];
-			double clientY = clientPos[1];
-			
-			if (clientX >= x && clientX <= x + iconWidth && clientY >= y && clientY <= y + iconHeight) {
-				double clientWidth = clientX - coreX;
-				double clientHeight = clientY - coreY;
-				if (clientWidth * clientWidth + clientHeight * clientHeight > radius * radius) {
-					return false;
-				}
-			} else {
-				return false;
+		try {
+			Integer type = (Integer) redisUtil.hget(key, "type");
+			String positionsStr = (String) redisUtil.hget(key, "positions");
+			Integer[][] positions = jsonStr2Arr(positionsStr);
+			if (positions.length != clientPositions.length) {
+				throw new IllegalParameterException("captcha " + key + " positions not match");
 			}
+			
+			int iconWidth = 0;
+			int iconHeight = 0;
+			double radius = 0;
+			boolean iconCore = true;
+			switch (type) {
+			case 1:
+				iconWidth = DragCaptchaUtil.getIconWidth();
+				iconHeight = DragCaptchaUtil.getIconHeight();
+				radius = iconWidth * DRAG_ERROR_RATIO;
+				iconCore = false;
+				break;
+			default:
+				iconWidth = ClickCaptchaUtil.getIconWidth();
+				iconHeight = ClickCaptchaUtil.getIconHeight();
+				radius = iconWidth * CLICK_ERROR_RATIO;
+				break;
+			}
+			
+			for (int i = 0; i < positions.length; i++) {
+				Integer[] position = positions[i];
+				double[] clientPos = clientPositions[i];
+				if (position.length != clientPos.length) {
+					throw new IllegalParameterException("captcha " + key + " positions not match");
+				}
+				
+				int x = position[0];
+				int y = position[1];
+				int coreX = iconCore ? x + iconWidth / 2 : x;
+				int coreY = iconCore ? y + iconHeight / 2 : y;
+				
+				double clientX = clientPos[0];
+				double clientY = clientPos[1];
+				
+				if (clientX >= x && clientX <= x + iconWidth && clientY >= y && clientY <= y + iconHeight) {
+					double clientWidth = clientX - coreX;
+					double clientHeight = clientY - coreY;
+					if (clientWidth * clientWidth + clientHeight * clientHeight > radius * radius) {
+						throw new IllegalParameterException("captcha " + key + " verify failed");
+					}
+				} else {
+					throw new IllegalParameterException("captcha " + key + " verify failed");
+				}
+			}
+		} catch (Exception e) {
+			expire(key);
+			System.out.println(e.getMessage());
+			return false;
 		}
-		redisUtil.del(key);
+		delete(key);
 		
 		return true;
 	}
@@ -273,7 +302,8 @@ public class ImageCaptchaUtil {
 			
 			return verify(key, clientPoss);
 		} catch (Exception e) {
-			e.printStackTrace();
+			expire(key);
+			System.out.println(e.getMessage());
 			return false;
 		}
 	}
@@ -329,7 +359,6 @@ public class ImageCaptchaUtil {
 	/**
 	 * 获取背景图
 	 * @param themeNum 主题编号
-	 * @param backgroundNum 背景图片编号
 	 * @return String 背景图片地址
 	 */
 	public static String backgroundPath(Integer themeNum) {
@@ -349,11 +378,38 @@ public class ImageCaptchaUtil {
 			List<Integer> fileNums = childFiles(sb.toString());
 			if (fileNums.size() > 0) {
 				Integer backgroundNum = fileNums.get(RandomUtil.randomInt(0, fileNums.size()));
-				return sb.append(File.separator).append(BASE_BACKGROUND).append(backgroundNum).append(".").append(BASE_IMG_SUFFIX).toString();
+				return sb.append(File.separator).append(BASE_BACKGROUND).append(backgroundNum).append(".").append(BASE_IMG_TYPE).toString();
 			} else {
 				return null;
 			}
 		}
+	}
+	
+	/**
+	 * 获取背景图片
+	 * @param themeNum 主题编号
+	 * @param ratio 背景图片缩放比率
+	 * @return
+	 */
+	public static String backgroundPath(Integer themeNum, Double ratio) {
+		String filePath = backgroundPath(themeNum);
+		
+		if (ratio != null) {
+			StringBuilder sb = new StringBuilder();
+			Integer dirIndex = filePath.lastIndexOf(File.separator);
+			sb.append(filePath.substring(0, dirIndex)).append(File.separator).append(ratio);
+			File file = new File(sb.toString());
+			if (!file.exists()) {
+				file.mkdirs();
+			}
+			sb.append(filePath.substring(dirIndex));
+			file = new File(sb.toString());
+			if (!file.exists()) {
+				ImgCompressUtil.resizeRatio(filePath, DEFAULT_WIDTH, ratio, sb.toString());
+			}
+			return sb.toString();
+		}
+		return filePath;
 	}
 	
 	/**
@@ -391,7 +447,7 @@ public class ImageCaptchaUtil {
 		
 		File file = new File(path);
 		if (file.exists()) {
-			Pattern pattern = Pattern.compile("^" + BASE_BACKGROUND + "([0-9]*)\\." + BASE_IMG_SUFFIX + "$", Pattern.CASE_INSENSITIVE);
+			Pattern pattern = Pattern.compile("^" + BASE_BACKGROUND + "([0-9]*)\\." + BASE_IMG_TYPE + "$", Pattern.CASE_INSENSITIVE);
 			Matcher matcher;
 			
 			File[] list = file.listFiles();

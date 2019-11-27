@@ -6,9 +6,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.mm.core.img.ImageCaptchaUtil;
+import org.mm.core.OriginCheck;
+import org.mm.core.captcha.CaptchaUtil;
+import org.mm.core.exception.NotFoundException;
+import org.mm.model.Website;
 import org.mm.service.VerifyService;
+import org.mm.service.WebsiteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,24 +25,65 @@ import org.springframework.web.bind.annotation.RestController;
 public class VerifyRestController extends BaseRestController {
 
 	@Autowired
+	private WebsiteService websiteService;
+	
+	@Autowired
 	private VerifyService verifyService;
 	
+	/**
+	 * 验证码基础信息
+	 * @param modelMap
+	 * @param params
+	 * @param request
+	 * @return
+	 */
+	@OriginCheck(key = "webKey", init = true)
 	@RequestMapping(value = "/param", method = RequestMethod.POST, headers = "Accept=application/json")
 	public Object param(ModelMap modelMap, @RequestBody Map<String, Object> params, HttpServletRequest request) {
-		modelMap.put("width", ImageCaptchaUtil.DEFAULT_WIDTH * VerifyService.account.getSize());
-		modelMap.put("height", ImageCaptchaUtil.DEFAULT_HEIGHT * VerifyService.account.getSize());
+		String webKey = (String) params.get("webKey");
+		Website website = websiteService.findByWebKey(webKey);
+		if (website != null) {
+			modelMap.put("width", CaptchaUtil.DEFAULT_WIDTH * website.getScalingRatio());
+			modelMap.put("height", CaptchaUtil.DEFAULT_HEIGHT * website.getScalingRatio());
+		} else {
+			throw new NotFoundException("无效的WebKey");
+		}
 		
 		return setSuccessModelMap(modelMap);
 	}
 	
+	/**
+	 * 初始化验证码
+	 * @param modelMap
+	 * @param params
+	 * @param request
+	 * @return
+	 */
+	@OriginCheck(key = "webKey", init = true)
 	@RequestMapping(value = "/init", method = RequestMethod.POST, headers = "Accept=application/json")
 	public Object init(ModelMap modelMap, @RequestBody Map<String, Object> params, HttpServletRequest request) {
-		Map<String, Object> verify = verifyService.init(VerifyService.account);
-		modelMap.putAll(verify);
+		String webKey = (String) params.get("webKey");
+		Website website = websiteService.findByWebKey(webKey);
+		if (website != null) {
+			String requestOrigin = request.getHeader(HttpHeaders.ORIGIN);
+			website.setUrl(requestOrigin); // 用于传参记录初始化的源地址
+			Map<String, Object> verify = verifyService.init(website);
+			modelMap.putAll(verify);
+		} else {
+			throw new NotFoundException("无效的WebKey");
+		}
 		
 		return setSuccessModelMap(modelMap);
 	}
 
+	/**
+	 * 校验验证码
+	 * @param modelMap
+	 * @param params
+	 * @param request
+	 * @return
+	 */
+	@OriginCheck(key = "key")
 	@RequestMapping(value = "/verify", method = RequestMethod.POST, headers = "Accept=application/json")
 	public Object verify(ModelMap modelMap, @RequestBody Map<String, Object> params, HttpServletRequest request) {
 		JSONObject json = new JSONObject(params);
@@ -63,12 +109,20 @@ public class VerifyRestController extends BaseRestController {
 		return setSuccessModelMap(modelMap);
 	}
 	
+	/**
+	 * 校验验证码token
+	 * @param modelMap
+	 * @param params
+	 * @param request
+	 * @return
+	 */
+	@OriginCheck(ignore = true)
 	@RequestMapping(value = "/verifyToken", method = RequestMethod.POST, headers = "Accept=application/json")
 	public Object tokenVerify(ModelMap modelMap, @RequestBody Map<String, Object> params, HttpServletRequest request) {
 		String apiKey = (String) params.get("apiKey");
 		String token = (String) params.get("token");
 
-		boolean success = ImageCaptchaUtil.verifyToken(apiKey, token);
+		boolean success = CaptchaUtil.verifyToken(apiKey, token);
 		modelMap.put("success", success);
 		
 		return setSuccessModelMap(modelMap);

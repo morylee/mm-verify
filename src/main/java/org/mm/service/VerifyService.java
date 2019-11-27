@@ -3,76 +3,58 @@ package org.mm.service;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mm.core.img.ImageCaptchaUtil;
+import org.mm.core.Constants;
+import org.mm.core.captcha.CaptchaUtil;
+import org.mm.core.exception.NotFoundException;
 import org.mm.core.util.RedisUtil;
+import org.mm.model.Captcha;
+import org.mm.model.Website;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class VerifyService {
 
-	public static class Account {
-		private String webKey;
-		private Integer secLevel;
-		private Integer captchaMode;
-		private Integer themeNum;
-		private Double size;
-		
-		public Account(String webKey, Integer secLevel, Integer captchaMode, Integer themeNum, Double size) {
-			this.webKey = webKey;
-			this.secLevel = secLevel;
-			this.captchaMode = captchaMode;
-			this.themeNum = themeNum;
-			this.size = size;
-		}
-		
-		public String getWebKey() {
-			return this.webKey;
-		}
-		public Integer getSecLevel() {
-			return this.secLevel;
-		}
-		public Integer getCaptchaMode() {
-			return this.captchaMode;
-		}
-		public Integer getThemeNum() {
-			return this.themeNum;
-		}
-		public Double getSize() {
-			return this.size;
-		}
-	}
-	
-	public static Account account= new Account("0a1b2c3d4e5f6a7b8c", 3, ImageCaptchaUtil.CaptchaMode.Click.getValue(), null, 1.5);
-	
 	@Autowired
 	private RedisUtil redisUtil;
 	
-	public Map<String, Object> init(Account account) {
+	@Autowired
+	private CaptchaService captchaService;
+	
+	/**
+	 * 生成验证码
+	 * @param website 网站信息
+	 * @return
+	 */
+	public Map<String, Object> init(Website website) {
 		String bgPath = null;
-		if (redisUtil.hasKey(account.getWebKey())) {
-			Map<Object, Object> tempBg = redisUtil.hmget(account.getWebKey());
+		if (redisUtil.hasKey(website.getWebKey())) {
+			Map<Object, Object> tempBg = redisUtil.hmget(website.getWebKey());
 			if (tempBg != null && !tempBg.isEmpty()) {
 				Integer usedTimes = (Integer) tempBg.get("times");
+				if (usedTimes == null) usedTimes = 0;
 				if (usedTimes < 3) {
 					bgPath = (String) tempBg.get("background");
-					redisUtil.hset(account.getWebKey(), "times", usedTimes + 1);
+					redisUtil.hset(website.getWebKey(), "times", usedTimes + 1);
 				} else {
-					redisUtil.del(account.getWebKey());
+					redisUtil.del(website.getWebKey());
 				}
 			}
 		}
 		if (bgPath == null) {
-			bgPath = ImageCaptchaUtil.backgroundPath(account.getThemeNum());
-			redisUtil.hset(account.getWebKey(), "background", bgPath);
-			redisUtil.hset(account.getWebKey(), "times", 1);
+			Double ratio = Website.HIGHEST_SCALING_RATIO.equals(website.getScalingRatio()) ? null : website.getScalingRatio();
+			bgPath = CaptchaUtil.backgroundPath(website.getThemeNum(), ratio);
+			if (bgPath == null) throw new NotFoundException("验证码生成失败，请重试！");
+			redisUtil.hset(website.getWebKey(), "background", bgPath);
+			redisUtil.hset(website.getWebKey(), "times", 1);
 		}
 		
-		Map<String, Object> result = ImageCaptchaUtil.securityGenerate(bgPath, account.getCaptchaMode(), account.getSecLevel());
+		Map<String, Object> result = CaptchaUtil.securityGenerate(bgPath, website.getSecMode(), website.getSecLevel());
 		Map<String, Object> resPub = new HashMap<String, Object>();
+		String key = (String) result.get("key");
 		resPub.put("success", result.get("ok"));
-		resPub.put("md", account.getCaptchaMode());
-		resPub.put("k", result.get("key"));
+		resPub.put("md", website.getSecMode());
+		resPub.put("k", key);
 		resPub.put("rpk", result.get("rsaPubKey"));
 		resPub.put("bg", result.get("background"));
 		resPub.put("srs", result.get("series"));
@@ -80,28 +62,40 @@ public class VerifyService {
 		resPub.put("gd", result.get("guide"));
 		resPub.put("ih", result.get("iconY"));
 		resPub.put("n", result.get("times"));
+		captchaService.create(key, website);
+		redisUtil.hset(key, Constants.REQUEST_ORIGIN_KEY, website.getUrl()); // 用于验证校验验证码请求的源地址
 		
 		return resPub;
 	}
 	
+	/**
+	 * 验证
+	 * @param key 验证码Key
+	 * @param positions 用户交互坐标
+	 * @return
+	 */
 	public Map<String, Object> verify(String key, String[][] positions) {
 		Map<String, Object> result = new HashMap<>();
 		
-		boolean isExpire = ImageCaptchaUtil.isExpire(key);
-		result.put("expired", isExpire);
-		if (isExpire) {
-			result.put("success", false);
-			return result;
-		}
-		
-		boolean success = ImageCaptchaUtil.securityVerify(key, positions);
+		boolean success = CaptchaUtil.securityVerify(key, positions);
+		boolean usable = CaptchaUtil.usable(key);
 		result.put("success", success);
+		result.put("expired", !usable);
 		if (success) {
-			String token = ImageCaptchaUtil.generateToken(account.getWebKey(), key);
+			Captcha captcha = captchaService.findByKey(key);
+			String token = CaptchaUtil.generateToken(captcha.getApiKey(), key);
 			if (token == null) {
+				captchaService.verify(key, Captcha.State.VerifyFailed);
 				result.put("success", false);
 			} else {
+				captchaService.verify(key, Captcha.State.VerifySuccess);
 				result.put("result", token);
+			}
+		} else {
+			if (usable) {
+				captchaService.verify(key, Captcha.State.Verified);
+			} else {
+				captchaService.verify(key, Captcha.State.VerifyFailed);
 			}
 		}
 		

@@ -1,15 +1,19 @@
-package org.mm.core.img;
+package org.mm.core.captcha;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 import org.mm.core.util.ArrayUtil;
+import org.mm.core.util.ImageUtil;
 import org.mm.core.util.RandomUtil;
 
-public class DragImageUtil {
+public class DragCaptchaUtil {
 
 	private static final int ICON_WIDTH = 60;
 	private static final int ICON_HEIGHT = 60;
@@ -185,15 +189,15 @@ public class DragImageUtil {
 	private static Map<String, Object> doCreateImage(String url) {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			BufferedImage bufferedImage = ImageUtil.readImageFile(url);
+			BufferedImage bufferedImage = ImageIO.read(new FileInputStream(url));
 			CutPosParams params = getCutPosition(bufferedImage.getWidth(), bufferedImage.getHeight());
 			BufferedImage target= new BufferedImage(ICON_WIDTH, ICON_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 			cutImg(bufferedImage, target, getBlockData(), params.x, params.y);
 			resultMap.put("background", bufferedImage); // 主图
-			resultMap.put("guide", target); // icon
+			resultMap.put("guide", target);             // icon
 			Integer[][] positions = new Integer[][]{{params.x, params.y}};
-			resultMap.put("positions", positions); // icon在主图的坐标
-			resultMap.put("times", 1); // 操作次数
+			resultMap.put("positions", positions);      // icon在主图的坐标
+			resultMap.put("times", 1);                  // 操作次数
 		} catch (IOException e) {
 			resultMap.clear();
 			e.printStackTrace();
@@ -217,7 +221,7 @@ public class DragImageUtil {
 	public static Map<String, Object> createImage(String url){
 		Map<String, Object> resultMap = doCreateImage(url);
 		resultMap.put("background", ImageUtil.getImageBASE64((BufferedImage) resultMap.get("background"))); // 主图
-		resultMap.put("guide", ImageUtil.getImageBASE64((BufferedImage) resultMap.get("guide"))); // icon
+		resultMap.put("guide", ImageUtil.getImageBASE64((BufferedImage) resultMap.get("guide")));           // icon
 		
 		return resultMap;
 	}
@@ -243,9 +247,10 @@ public class DragImageUtil {
 		Integer[] upsetSeries = null;
 		if (upset) upsetSeries = ArrayUtil.upsetNumbers(vCut * hCut);
 
-		resultMap.put("background", ImageUtil.imagePieces((BufferedImage) resultMap.get("background"), vCut, hCut, upsetSeries)); // 主图
-		resultMap.put("guide", ImageUtil.getImageBASE64((BufferedImage) resultMap.get("guide"))); // icon
-		resultMap.put("series", upsetSeries); // 主图打乱的顺序
+		resultMap.put("background",
+			ImageUtil.imagePieces((BufferedImage) resultMap.get("background"), vCut, hCut, upsetSeries)); // 主图
+		resultMap.put("guide", ImageUtil.getImageBASE64((BufferedImage) resultMap.get("guide")));         // icon
+		resultMap.put("series", upsetSeries);                                                             // 主图打乱的顺序
 		return resultMap;
 	}
 

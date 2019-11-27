@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.mm.mapper.WebsiteMapper" >
+
+	<resultMap id="BaseResultMap" type="org.mm.model.Website" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="account_id" property="accountId" jdbcType="INTEGER" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="api_key" property="apiKey" jdbcType="VARCHAR" />
+		<result column="web_key" property="webKey" jdbcType="VARCHAR" />
+		<result column="sec_level" property="secLevel" jdbcType="INTEGER" />
+		<result column="sec_mode" property="secMode" jdbcType="INTEGER" />
+		<result column="theme_num" property="themeNum" jdbcType="INTEGER" />
+		<result column="scaling_ratio" property="scalingRatio" jdbcType="DOUBLE" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="BaseColumnList" >
+		id, account_id, url, api_key, web_key, sec_level, sec_mode, theme_num, scaling_ratio, state, created_at, updated_at
+	</sql>
+	
+	<select id="findByParams" resultMap="BaseResultMap" parameterType="java.util.Map" >
+		select
+		<include refid="BaseColumnList" />
+		from mm_website
+		<where>
+			<if test="apiKey != null and apiKey != ''">
+				api_key = #{apiKey}
+			</if>
+			<if test="webKey != null and webKey != ''">
+				and web_key = #{webKey}
+			</if>
+			<if test="state != null">
+				and state = #{state}
+			</if>
+		</where>
+	</select>
+
+</mapper>

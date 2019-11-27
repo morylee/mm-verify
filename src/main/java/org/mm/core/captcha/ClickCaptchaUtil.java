@@ -1,6 +1,7 @@
-package org.mm.core.img;
+package org.mm.core.captcha;
 
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,12 +9,15 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import org.mm.core.util.ArrayUtil;
+import org.mm.core.util.ImageUtil;
 import org.mm.core.util.RandomUtil;
 
-public class ClickImageUtil {
+public class ClickCaptchaUtil {
 
 	private static final int ICON_WIDTH = 30;
 	private static final int ICON_HEIGHT = 30;
+	private static final int ICON_X_PADDING = 45;
+	private static final int ICON_Y_PADDING = 45;
 	
 	public static final int getIconWidth() {
 		return ICON_WIDTH;
@@ -94,16 +98,16 @@ public class ClickImageUtil {
 		int posX, posY, px, py;
 		Integer[] position;
 		for (int i = 0; i < n; i++) {
-			tooClose = false;
 			do {
+				tooClose = false;
 				posX = RandomUtil.randomInt(10, w - 10 - ICON_WIDTH);
 				posY = RandomUtil.randomInt(10, h - 10 - ICON_HEIGHT);
 				for (int j = 0; j < positions.length; j++) {
 					position = positions[j];
 					px = position[0] == null ? 0 : position[0];
 					py = position[1] == null ? 0 : position[1];
-					if (px - ICON_WIDTH <= posX && px + ICON_WIDTH >= posX
-						&& py - ICON_HEIGHT <= posY && py + ICON_HEIGHT >= posY) {
+					if (px - ICON_X_PADDING <= posX && px + ICON_X_PADDING >= posX
+						&& py - ICON_Y_PADDING <= posY && py + ICON_Y_PADDING >= posY) {
 						tooClose = true;
 						break;
 					}
@@ -150,7 +154,7 @@ public class ClickImageUtil {
 	private static Map<String, Object> doCreateImage(String url, int n) {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			BufferedImage bufferedImage = ImageUtil.readImageFile(url);
+			BufferedImage bufferedImage = ImageIO.read(new FileInputStream(url));
 			
 			Icon[] icons = getIcons(n);
 			n = icons.length;
@@ -162,7 +166,7 @@ public class ClickImageUtil {
 				icon = icons[i];
 				iconImgs[i] = getIconImage(icon);
 				sb.append(icon.name);
-				if (i < n - 1) sb.append(",");
+				if (i < n - 1) sb.append("，");
 			}
 			Integer[][] posXY = getPositions(bufferedImage.getWidth(), bufferedImage.getHeight(), n);
 			drawImg(bufferedImage, iconImgs, posXY);
@@ -171,9 +175,9 @@ public class ClickImageUtil {
 			if (posXY == null || posXY.length != iconImgs.length) {
 				throw new RuntimeException("draw image falied");
 			} else {
-				resultMap.put("guide", sb.toString()); // 操作提示
-				resultMap.put("times", posXY.length); // 操作次数
-				resultMap.put("positions", posXY); // icon在主图的坐标
+				resultMap.put("guide", sb.toString());  // 操作提示
+				resultMap.put("times", posXY.length);   // 操作次数
+				resultMap.put("positions", posXY);      // icon在主图的坐标
 			}
 		} catch (IOException e) {
 			resultMap.clear();
