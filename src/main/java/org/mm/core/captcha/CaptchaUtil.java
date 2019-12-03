@@ -394,22 +394,20 @@ public class CaptchaUtil {
 	public static String backgroundPath(Integer themeNum, Double ratio) {
 		String filePath = backgroundPath(themeNum);
 		
-		if (ratio != null) {
-			StringBuilder sb = new StringBuilder();
-			Integer dirIndex = filePath.lastIndexOf(File.separator);
-			sb.append(filePath.substring(0, dirIndex)).append(File.separator).append(ratio);
-			File file = new File(sb.toString());
-			if (!file.exists()) {
-				file.mkdirs();
-			}
-			sb.append(filePath.substring(dirIndex));
-			file = new File(sb.toString());
-			if (!file.exists()) {
-				ImgCompressUtil.resizeRatio(filePath, DEFAULT_WIDTH, ratio, sb.toString());
-			}
-			return sb.toString();
+		StringBuilder sb = new StringBuilder();
+		Integer dirIndex = filePath.lastIndexOf(File.separator);
+		sb.append(filePath.substring(0, dirIndex)).append(File.separator).append(ratio);
+		File file = new File(sb.toString());
+		if (!file.exists()) {
+			file.mkdirs();
 		}
-		return filePath;
+		sb.append(filePath.substring(dirIndex));
+		file = new File(sb.toString());
+		if (file.exists()) {
+			return sb.toString();
+		} else {
+			return ImgCompressUtil.resizeRatio(filePath, DEFAULT_WIDTH, DEFAULT_HEIGHT, ratio, sb.toString());
+		}
 	}
 	
 	/**

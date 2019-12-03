@@ -26,18 +26,27 @@ public final class ImgCompressUtil {
 	 * @param ratio 比例
 	 * @return
 	 */
-	public static void resizeRatio(String filePath, Integer width, Double ratio, String targetPath) {
+	public static String resizeRatio(String filePath, Integer width, Integer height, Double ratio, String targetPath) {
 		try {
-			File file = new File(filePath); // 读入文件
-			Image image = ImageIO.read(file);
-			Double w = width * ratio;
-			Double h = 1.0 * image.getHeight(null) * w / image.getWidth(null);
-			resize(image, w.intValue(), h.intValue(), targetPath);
+			if (ratio != null && width != null && height != null) {
+				File file = new File(filePath); // 读入文件
+				Image image = ImageIO.read(file);
+				if (image.getWidth(null) == width.intValue() * ratio.doubleValue()
+						&& image.getHeight(null) == height.intValue() * ratio.doubleValue()) {
+					return filePath;
+				} else {
+					Double w = width * ratio;
+					Double h = height * ratio;
+					resize(image, w.intValue(), h.intValue(), targetPath);
+					return targetPath;
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 	
 	/**

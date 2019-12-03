@@ -3,6 +3,7 @@ package org.mm.core.captcha;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,8 @@ public class DragCaptchaUtil {
 	private static final int CIRCLE_RADIUS = 7;
 	private static final int RECTANGLE_PADDING = 9;
 	private static final int SLIDER_IMG_OUT_PADDING = 2;
+	private static final int TRANSPARENT = new Color(0f, 0f, 0f, 0f).getRGB();
+	private static final int BORDER = new Color(1f, 1f, 1f, 0.5f).getRGB();
 	
 	public static final int getIconWidth() {
 		return ICON_WIDTH;
@@ -154,6 +157,8 @@ public class DragCaptchaUtil {
 	 * @param y           裁剪点y
 	 */
 	private static void cutImg(BufferedImage oriImage, BufferedImage targetImage, int[][] blockImage, int x, int y) {
+		Color color;
+		float[] colorRgb;
 		for (int i = 0; i < ICON_WIDTH; i++) {
 			for (int j = 0; j < ICON_HEIGHT; j++) {
 				int _x = x + i;
@@ -164,14 +169,31 @@ public class DragCaptchaUtil {
 				if (rgb == 1) {
 					//抠图上复制对应颜色值
 					targetImage.setRGB(i, j, rgbOri);
+					rgbOri = transparent(rgbOri);
+					color = new Color(rgbOri, true);
+					colorRgb = color.getComponents(null);
 					//原图对应位置颜色变化
-					oriImage.setRGB(_x, _y, Color.WHITE.getRGB());
+					oriImage.setRGB(_x, _y, new Color(colorRgb[0], colorRgb[1], colorRgb[2], 0.65f).getRGB());
 				} else if (rgb == 2) {
-					targetImage.setRGB(i, j, Color.WHITE.getRGB());
-					oriImage.setRGB(_x, _y, Color.GRAY.getRGB());
+					targetImage.setRGB(i, j, BORDER);
+					oriImage.setRGB(_x, _y, BORDER);
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 透明化
+	 * @param origin
+	 * @return
+	 */
+	public static int transparent(int origin) {
+		if (((origin & 0xFF000000) != 0) &&
+				(0xFFFFFFFF != (TRANSPARENT & 0xFF000000))) {
+			origin = (origin & 0xFFFFFF | TRANSPARENT & 0xFF000000);
+		}
+		
+		return origin;
 	}
 	
 	/**
@@ -189,10 +211,11 @@ public class DragCaptchaUtil {
 	private static Map<String, Object> doCreateImage(String url) {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			BufferedImage bufferedImage = ImageIO.read(new FileInputStream(url));
+			BufferedImage bufferedImage = readImage(url);
 			CutPosParams params = getCutPosition(bufferedImage.getWidth(), bufferedImage.getHeight());
-			BufferedImage target= new BufferedImage(ICON_WIDTH, ICON_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			BufferedImage target= new BufferedImage(ICON_WIDTH, ICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 			cutImg(bufferedImage, target, getBlockData(), params.x, params.y);
+			
 			resultMap.put("background", bufferedImage); // 主图
 			resultMap.put("guide", target);             // icon
 			Integer[][] positions = new Integer[][]{{params.x, params.y}};
@@ -203,6 +226,27 @@ public class DragCaptchaUtil {
 			e.printStackTrace();
 		}
 		return resultMap;
+	}
+	
+	/**
+	 * 读取图片
+	 * @param url
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public static BufferedImage readImage(String url) throws FileNotFoundException, IOException {
+		BufferedImage originImage = ImageIO.read(new FileInputStream(url));
+		int w = originImage.getWidth();
+		int h = originImage.getHeight();
+		BufferedImage bufferedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		for (int i = 0; i < w; i++) {
+			for (int j = 0; j < h; j++) {
+				bufferedImage.setRGB(i, j, originImage.getRGB(i, j));
+			}
+		}
+		
+		return bufferedImage;
 	}
 	
 	/**

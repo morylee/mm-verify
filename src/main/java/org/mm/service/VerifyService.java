@@ -42,8 +42,7 @@ public class VerifyService {
 			}
 		}
 		if (bgPath == null) {
-			Double ratio = Website.HIGHEST_SCALING_RATIO.equals(website.getScalingRatio()) ? null : website.getScalingRatio();
-			bgPath = CaptchaUtil.backgroundPath(website.getThemeNum(), ratio);
+			bgPath = CaptchaUtil.backgroundPath(website.getThemeNum(), website.getScalingRatio());
 			if (bgPath == null) throw new NotFoundException("验证码生成失败，请重试！");
 			redisUtil.hset(website.getWebKey(), "background", bgPath);
 			redisUtil.hset(website.getWebKey(), "times", 1);
