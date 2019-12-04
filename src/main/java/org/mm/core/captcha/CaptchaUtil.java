@@ -357,6 +357,29 @@ public class CaptchaUtil {
 	}
 	
 	/**
+	 * 删除token
+	 * @param apiKey
+	 * @param token
+	 * @return
+	 */
+	public static boolean delToken(String apiKey, String token) {
+		try {
+			String decryptToken = Base64CoderUtil.decrypt(token);
+			String aesKey = Md5CoderUtil.len16(apiKey + decryptToken.substring(0, 16));
+			decryptToken = AesCoderUtil.decrypt(decryptToken.substring(32), aesKey);
+			String decryptUuid = decryptToken.substring(32);
+			
+			if (redisUtil.hasKey(decryptUuid)) {
+				redisUtil.del(decryptUuid);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	/**
 	 * 获取背景图
 	 * @param themeNum 主题编号
 	 * @return String 背景图片地址

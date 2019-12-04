@@ -100,5 +100,25 @@ public class VerifyService {
 		
 		return result;
 	}
+	
+	/**
+	 * 删除验证码
+	 * @param webKey
+	 * @param key
+	 * @return
+	 */
+	public boolean delete(String webKey, String key) {
+		try {
+			Captcha captcha = captchaService.findByKey(key);
+			if (captcha != null && captcha.getWebKey().equals(webKey)) {
+				CaptchaUtil.delete(key);
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
 
 }

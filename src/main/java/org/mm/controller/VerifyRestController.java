@@ -110,6 +110,25 @@ public class VerifyRestController extends BaseRestController {
 	}
 	
 	/**
+	 * 删除验证码
+	 * @param modelMap
+	 * @param params
+	 * @param request
+	 * @return
+	 */
+	@OriginCheck(key = "webKey", init = true)
+	@RequestMapping(value = "/del", method = RequestMethod.POST, headers = "Accept=application/json")
+	public Object delete(ModelMap modelMap, @RequestBody Map<String, Object> params, HttpServletRequest request) {
+		String webKey = (String) params.get("webKey");
+		String key = (String) params.get("key");
+		
+		boolean success = verifyService.delete(webKey, key);
+		modelMap.put("success", success);
+		
+		return setSuccessModelMap(modelMap);
+	}
+	
+	/**
 	 * 校验验证码token
 	 * @param modelMap
 	 * @param params
@@ -118,11 +137,36 @@ public class VerifyRestController extends BaseRestController {
 	 */
 	@OriginCheck(ignore = true)
 	@RequestMapping(value = "/verifyToken", method = RequestMethod.POST, headers = "Accept=application/json")
-	public Object tokenVerify(ModelMap modelMap, @RequestBody Map<String, Object> params, HttpServletRequest request) {
+	public Object verifyToken(ModelMap modelMap, @RequestBody Map<String, Object> params, HttpServletRequest request) {
 		String apiKey = (String) params.get("apiKey");
 		String token = (String) params.get("token");
 
 		boolean success = CaptchaUtil.verifyToken(apiKey, token);
+		modelMap.put("success", success);
+		
+		return setSuccessModelMap(modelMap);
+	}
+	
+	/**
+	 * 删除验证码token
+	 * @param modelMap
+	 * @param params
+	 * @param request
+	 * @return
+	 */
+	@OriginCheck(key = "webKey", init = true)
+	@RequestMapping(value = "/delToken", method = RequestMethod.POST, headers = "Accept=application/json")
+	public Object delToken(ModelMap modelMap, @RequestBody Map<String, Object> params, HttpServletRequest request) {
+		String webKey = (String) params.get("webKey");
+		String token = (String) params.get("token");
+		
+		boolean success = false;
+		Website website = websiteService.findByWebKey(webKey);
+		if (website == null) {
+			throw new NotFoundException("无效的WebKey");
+		} else {
+			success = CaptchaUtil.delToken(website.getApiKey(), token);
+		}
 		modelMap.put("success", success);
 		
 		return setSuccessModelMap(modelMap);

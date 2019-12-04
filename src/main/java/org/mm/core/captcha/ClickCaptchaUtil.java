@@ -28,8 +28,8 @@ public class ClickCaptchaUtil {
 	}
 	
 	enum Icon {
-		Star(0, "星星", "/images/starIcon.png"), Triangle(1, "三角形", "/images/triangleIcon.png"),
-		Square(2, "正方形", "/images/squareIcon.png"), Circular(3, "圆形", "/images/circularIcon.png"),
+		Star(0, "星星", "/images/starIcon.png"), Triangle(1, "三角", "/images/triangleIcon.png"),
+		Square(2, "方形", "/images/squareIcon.png"), Circular(3, "圆形", "/images/circularIcon.png"),
 		Cloud(4, "云朵", "/images/cloudIcon.png"), Rhombus(5, "菱形", "/images/rhombusIcon.png"),
 		Heart(6, "心形", "/images/heartIcon.png");
 		
