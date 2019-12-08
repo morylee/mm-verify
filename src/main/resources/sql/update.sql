@@ -21,7 +21,7 @@ CREATE TABLE `mm_account` (
 -- Data for table `mm_account`
 --
 LOCK TABLES `mm_account` WRITE;
-INSERT INTO `mm_account` VALUES (1, '云众可信', null, 'yzkx@cloudcrowd.com.cn', NULL, 1, 0, sysdate(), sysdate());
+INSERT INTO `mm_account` VALUES (1, '云众可信', '', 'yzkx@cloudcrowd.com.cn', NULL, 1, 0, sysdate(), sysdate());
 UNLOCK TABLES;
 
 --
