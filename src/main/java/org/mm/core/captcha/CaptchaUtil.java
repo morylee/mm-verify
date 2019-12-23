@@ -75,12 +75,13 @@ public class CaptchaUtil {
 	 * @param canvasPath
 	 * @param type
 	 * @param times
+	 * @param iconType
 	 * @param vCut
 	 * @param hCut
 	 * @param upset
 	 * @return
 	 */
-	public static Map<String, Object> generate(String canvasPath, Integer type, Integer times, Integer vCut, Integer hCut, Boolean upset) {
+	public static Map<String, Object> generate(String canvasPath, Integer type, Integer times, Integer iconType, Integer vCut, Integer hCut, Boolean upset) {
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		
 		if (times == null || times < 0) times = DEFAULT_TIMES;
@@ -91,7 +92,7 @@ public class CaptchaUtil {
 		if (type.intValue() == CaptchaMode.Drag.getValue().intValue()) {
 			resMap = DragCaptchaUtil.createImage(canvasPath, vCut, hCut, upset);
 		} else {
-			resMap = ClickCaptchaUtil.createImage(canvasPath, times, vCut, hCut, upset);
+			resMap = ClickCaptchaUtil.createImage(canvasPath, times, iconType, vCut, hCut, upset);
 		}
 		
 		if (resMap.isEmpty()) {
@@ -123,10 +124,11 @@ public class CaptchaUtil {
 	 * @param canvasPath
 	 * @param type
 	 * @param times
+	 * @param iconType
 	 * @return
 	 */
-	public static Map<String, Object> securityGenerate(String canvasPath, int type, Integer times) {
-		Map<String, Object> resMap = generate(canvasPath, type, times, null, null, null);
+	public static Map<String, Object> securityGenerate(String canvasPath, int type, Integer times, Integer iconType) {
+		Map<String, Object> resMap = generate(canvasPath, type, times, iconType, null, null, null);
 		boolean success = (Boolean) resMap.get("ok");
 		if (success) {
 			try {

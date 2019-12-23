@@ -48,7 +48,7 @@ public class VerifyService {
 			redisUtil.hset(website.getWebKey(), "times", 1);
 		}
 		
-		Map<String, Object> result = CaptchaUtil.securityGenerate(bgPath, website.getSecMode(), website.getSecLevel());
+		Map<String, Object> result = CaptchaUtil.securityGenerate(bgPath, website.getSecMode(), website.getSecLevel(), website.getIconType());
 		Map<String, Object> resPub = new HashMap<String, Object>();
 		String key = (String) result.get("key");
 		resPub.put("success", result.get("ok"));

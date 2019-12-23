@@ -10,6 +10,7 @@
 		<result column="web_key" property="webKey" jdbcType="VARCHAR" />
 		<result column="sec_level" property="secLevel" jdbcType="INTEGER" />
 		<result column="sec_mode" property="secMode" jdbcType="INTEGER" />
+		<result column="icon_type" property="iconType" jdbcType="INTEGER" />
 		<result column="theme_num" property="themeNum" jdbcType="INTEGER" />
 		<result column="scaling_ratio" property="scalingRatio" jdbcType="DOUBLE" />
 		<result column="state" property="state" jdbcType="INTEGER" />
@@ -18,7 +19,7 @@
 	</resultMap>
 	
 	<sql id="BaseColumnList" >
-		id, account_id, url, api_key, web_key, sec_level, sec_mode, theme_num, scaling_ratio, state, created_at, updated_at
+		id, account_id, url, api_key, web_key, sec_level, sec_mode, icon_type, theme_num, scaling_ratio, state, created_at, updated_at
 	</sql>
 	
 	<select id="findByParams" resultMap="BaseResultMap" parameterType="java.util.Map" >

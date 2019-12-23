@@ -108,3 +108,9 @@ CREATE TABLE `mm_captcha` (
   KEY `CAPTCHA_API_KEY_IND` (`api_key`),
   KEY `CAPTCHA_WEB_KEY_IND` (`web_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=298 DEFAULT CHARSET=utf8;
+
+/* 20191223 */
+ALTER TABLE mm_website
+ADD COLUMN icon_type INT(2) NULL AFTER sec_mode;
+
+UPDATE mm_website SET icon_type = 0;

@@ -3,7 +3,9 @@ package org.mm.core.captcha;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -28,17 +30,24 @@ public class ClickCaptchaUtil {
 	}
 	
 	enum Icon {
-		Star(0, "星星", "/images/starIcon.png"), Triangle(1, "三角", "/images/triangleIcon.png"),
-		Square(2, "方形", "/images/squareIcon.png"), Circular(3, "圆形", "/images/circularIcon.png"),
-		Cloud(4, "云朵", "/images/cloudIcon.png"), Rhombus(5, "菱形", "/images/rhombusIcon.png"),
-		Heart(6, "心形", "/images/heartIcon.png");
+		Star(0, 0, "星星", "/images/starIcon.png"), Triangle(1, 0, "三角", "/images/triangleIcon.png"),
+		Square(2, 0, "方形", "/images/squareIcon.png"), Circular(3, 0, "圆形", "/images/circularIcon.png"),
+		Cloud(4, 0, "云朵", "/images/cloudIcon.png"), Rhombus(5, 0, "菱形", "/images/rhombusIcon.png"),
+		Heart(6, 0, "心形", "/images/heartIcon.png"),
+		AstonishedFace(100, 1, "惊讶", "/images/astonishedFace.png"), BlowAKiss(101, 1, "飞吻", "/images/blowAKiss.png"),
+		ColdSweat(102, 1, "冷汗", "/images/coldSweat.png"), ConfusedFace(103, 1, "困扰", "/images/confusedFace.png"),
+		HeartShapedEyes(104, 1, "花痴", "/images/heartShapedEyes.png"), Laughter(105, 1, "大笑", "/images/laughter.png"),
+		Smile(106, 1, "微笑", "/images/smile.png"), StuckOutTongue(107, 1, "吐舌", "/images/stuckOutTongue.png"),
+		TearsOfJoy(108, 1, "笑哭", "/images/tearsOfJoy.png"), ZipperMouth(109, 1, "闭嘴", "/images/zipperMouth.png");
 		
 		int value;
+		int type;
 		String name;
 		String imgName;
 		
-		private Icon(int value, String name, String imgName) {
+		private Icon(int value, int type, String name, String imgName) {
 			this.value = value;
+			this.type = type;
 			this.name = name;
 			this.imgName = imgName;
 		}
@@ -57,8 +66,46 @@ public class ClickCaptchaUtil {
 					return Rhombus;
 				case 6:
 					return Heart;
+				case 100:
+					return AstonishedFace;
+				case 101:
+					return BlowAKiss;
+				case 102:
+					return ColdSweat;
+				case 103:
+					return ConfusedFace;
+				case 104:
+					return HeartShapedEyes;
+				case 105:
+					return Laughter;
+				case 106:
+					return Smile;
+				case 107:
+					return StuckOutTongue;
+				case 108:
+					return TearsOfJoy;
+				case 109:
+					return ZipperMouth;
 				default:
 					return Star;
+			}
+		}
+		
+		public final static List<Icon> shape = new ArrayList<>();
+		public final static List<Icon> emoji = new ArrayList<>();
+		
+		static {
+			for (Icon icon: Icon.values()) {
+				switch(icon.type) {
+				case 0:
+					shape.add(icon);
+					break;
+				case 1:
+					emoji.add(icon);
+					break;
+				default:
+					break;
+				}
 			}
 		}
 	}
@@ -120,12 +167,28 @@ public class ClickCaptchaUtil {
 	}
 	
 	public static Icon[] getIcons(int n) {
-		int iconTotal = Icon.values().length;
+		return getIcons(n, null);
+	}
+	
+	public static Icon[] getIcons(int n, Integer type) {
+		List<Icon> iconList;
+		int baseNum;
+		switch (type) {
+		case 1:
+			iconList = Icon.emoji;
+			baseNum = 100;
+			break;
+		default:
+			iconList = Icon.shape;
+			baseNum = 0;
+			break;
+		}
+		int iconTotal = iconList.size();
 		Integer[] upsetNumbers = ArrayUtil.upsetNumbers(iconTotal);
 		if (n > iconTotal) n = iconTotal;
 		Icon[] icons = new Icon[n];
 		for (int i = 0; i < n; i++) {
-			icons[i] = Icon.valueOf(upsetNumbers[i]);
+			icons[i] = Icon.valueOf(baseNum + upsetNumbers[i]);
 		}
 		
 		return icons;
@@ -144,6 +207,7 @@ public class ClickCaptchaUtil {
 	 * 创建图片
 	 * @param url
 	 * @param n
+	 * @param iconType
 	 * @return Map<String, Object> {
 	 *     background: 主图 BufferedImage,
 	 *     guide: 提示文字,
@@ -151,12 +215,12 @@ public class ClickCaptchaUtil {
 	 *     times: icon 个数
 	 * }
 	 */
-	private static Map<String, Object> doCreateImage(String url, int n) {
+	private static Map<String, Object> doCreateImage(String url, int n, Integer iconType) {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			BufferedImage bufferedImage = ImageIO.read(new FileInputStream(url));
 			
-			Icon[] icons = getIcons(n);
+			Icon[] icons = getIcons(n, iconType);
 			n = icons.length;
 			BufferedImage[] iconImgs = new BufferedImage[n];
 			StringBuffer sb = new StringBuffer();
@@ -191,6 +255,7 @@ public class ClickCaptchaUtil {
 	 * 创建图片Base64
 	 * @param url
 	 * @param n
+	 * @param iconType
 	 * @return Map<String, Object> {
 	 *     background: 主图 Base64,
 	 *     guide: 提示文字,
@@ -198,8 +263,8 @@ public class ClickCaptchaUtil {
 	 *     times: icon 个数
 	 * }
 	 */
-	public static Map<String, Object> createImage(String url, int n) {
-		Map<String, Object> resultMap = doCreateImage(url, n);
+	public static Map<String, Object> createImage(String url, int n, Integer iconType) {
+		Map<String, Object> resultMap = doCreateImage(url, n, iconType);
 		resultMap.put("background", ImageUtil.getImageBASE64((BufferedImage) resultMap.get("background")));
 		
 		return resultMap;
@@ -212,6 +277,7 @@ public class ClickCaptchaUtil {
 	 * @param vCut
 	 * @param hCut
 	 * @param upset
+	 * @param iconType
 	 * @return Map<String, Object> {
 	 *     background: [主图分片 Base64],
 	 *     guide: 提示文字,
@@ -220,8 +286,8 @@ public class ClickCaptchaUtil {
 	 *     times: icon 个数
 	 * }
 	 */
-	public static Map<String, Object> createImage(String url, int n, int vCut, int hCut, boolean upset) {
-		Map<String, Object> resultMap = doCreateImage(url, n);
+	public static Map<String, Object> createImage(String url, int n, Integer iconType, int vCut, int hCut, boolean upset) {
+		Map<String, Object> resultMap = doCreateImage(url, n, iconType);
 		Integer[] upsetSeries = null;
 		if (upset) upsetSeries = ArrayUtil.upsetNumbers(vCut * hCut);
 

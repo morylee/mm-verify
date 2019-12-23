@@ -40,6 +40,7 @@ public class Website implements Serializable {
 	private String webKey;
 	private Integer secLevel;
 	private Integer secMode;
+	private Integer iconType;
 	private Integer themeNum;
 	private Double scalingRatio;
 	private Integer state;
@@ -87,6 +88,12 @@ public class Website implements Serializable {
 	}
 	public void setSecMode(Integer secMode) {
 		this.secMode = secMode;
+	}
+	public Integer getIconType() {
+		return iconType;
+	}
+	public void setIconType(Integer iconType) {
+		this.iconType = iconType;
 	}
 	public Integer getThemeNum() {
 		return themeNum;
