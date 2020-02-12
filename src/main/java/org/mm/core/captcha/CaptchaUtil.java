@@ -259,13 +259,9 @@ public class CaptchaUtil {
 				double clientX = clientPos[0];
 				double clientY = clientPos[1];
 				
-				if (clientX >= x && clientX <= x + iconWidth && clientY >= y && clientY <= y + iconHeight) {
-					double clientWidth = clientX - coreX;
-					double clientHeight = clientY - coreY;
-					if (clientWidth * clientWidth + clientHeight * clientHeight > radius * radius) {
-						throw new IllegalParameterException("captcha " + key + " verify failed");
-					}
-				} else {
+				double clientWidth = clientX - coreX;
+				double clientHeight = clientY - coreY;
+				if (clientWidth * clientWidth + clientHeight * clientHeight > radius * radius) {
 					throw new IllegalParameterException("captcha " + key + " verify failed");
 				}
 			}
