@@ -28,6 +28,9 @@ public class RedisConfig {
 
 	@Value("${redis.password}")
 	private String password;
+	
+	@Value("${redis.redisDb}")
+	private Integer redisDb;
 
 	@Value("${redis.timeout}")
 	private Integer timeout;
@@ -70,7 +73,7 @@ public class RedisConfig {
 	@Bean
 	public RedisStandaloneConfiguration redisStandaloneConfiguration() {
 		RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-//		redisStandaloneConfiguration.setDatabase(redisDb);
+		redisStandaloneConfiguration.setDatabase(redisDb);
 		redisStandaloneConfiguration.setPort(port);
 //		redisStandaloneConfiguration.setPassword(RedisPassword.of(password));
 		redisStandaloneConfiguration.setHostName(hostName);

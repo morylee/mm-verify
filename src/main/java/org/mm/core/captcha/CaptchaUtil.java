@@ -320,7 +320,7 @@ public class CaptchaUtil {
 			String token = uuidMd5 + AesCoderUtil.encrypt(Md5CoderUtil.len32(key) + uuid, aesKey);
 			token = Base64CoderUtil.encrypt(token);
 			
-			redisUtil.set(uuid, token, TOKEN_EXPIRE_SECONDS);
+			redisUtil.set(uuid.replace("-", ""), token, TOKEN_EXPIRE_SECONDS);
 			
 			return token;
 		} catch (Exception e) {
@@ -342,7 +342,7 @@ public class CaptchaUtil {
 			String aesKey = Md5CoderUtil.len16(apiKey + decryptToken.substring(0, 16));
 			decryptToken = AesCoderUtil.decrypt(decryptToken.substring(32), aesKey);
 			String decryptUuid = decryptToken.substring(32);
-			String savedToken = (String) redisUtil.get(decryptUuid);
+			String savedToken = (String) redisUtil.get(decryptUuid.replace("-", ""));
 			
 			if (token.equals(savedToken)) {
 				redisUtil.del(decryptUuid);
