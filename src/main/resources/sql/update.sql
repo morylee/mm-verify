@@ -114,3 +114,8 @@ ALTER TABLE mm_website
 ADD COLUMN icon_type INT(2) NULL AFTER sec_mode;
 
 UPDATE mm_website SET icon_type = 0;
+
+/* 20200310 */
+INSERT INTO `mm_website` (`account_id`, `url`, `api_key`, `web_key`, `sec_level`, `sec_mode`, `icon_type`, `theme_num`, `scaling_ratio`, `state`, `created_at`, `updated_at`)
+VALUES (1, 'www.cloudcrowd.com.cn', '029088ad4a7a4dfd9b7acc7c03722054', 'd67a608596d04eedba84c4b3c6564971', 3, 1, 0, 0, 1.0, 0, sysdate(), sysdate()),
+	(1, '*.cloudcrowd.com.cn', '6b87fa888fe84114991bc6c44fb02aea', '28e7c0b54c934934b9519c651b699f9b', 2, 1, 0, 0, 1.0, 0, sysdate(), sysdate());
