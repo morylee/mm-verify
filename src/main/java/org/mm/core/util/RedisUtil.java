@@ -89,7 +89,7 @@ public class RedisUtil {
 	 * @return true成功 false失败 
 	 */
 	public boolean set(String key, Object value) {
-		 try {
+		try {
 			redisTemplate.opsForValue().set(key, value);
 			return true;
 		} catch (Exception e) {
@@ -210,8 +210,22 @@ public class RedisUtil {
 	 * @return true 成功 false失败 
 	 */
 	public boolean hset(String key, String item, Object value) {
-		 try {
+		try {
 			redisTemplate.opsForHash().put(key, item, value);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean hsetIfNull(String key, String item, Object value, long time) {
+		try {
+			if (hHasKey(key, item)) return false;
+			redisTemplate.opsForHash().put(key, item, value);
+			if (time > 0) {
+				expire(key, time);
+			}
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -228,7 +242,7 @@ public class RedisUtil {
 	 * @return true 成功 false失败 
 	 */
 	public boolean hset(String key, String item, Object value, long time) {
-		 try {
+		try {
 			redisTemplate.opsForHash().put(key, item, value);
 			if(time>0){
 				expire(key, time);

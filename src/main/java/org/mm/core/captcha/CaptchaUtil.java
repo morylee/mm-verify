@@ -25,6 +25,7 @@ import org.mm.core.util.ClientKeyUtil;
 import org.mm.core.util.ImgCompressUtil;
 import org.mm.core.util.RandomUtil;
 import org.mm.core.util.RedisUtil;
+import org.mm.core.util.TypeParseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -337,21 +338,38 @@ public class CaptchaUtil {
 	 * @return
 	 */
 	public static boolean verifyToken(String apiKey, String token) {
+		String decryptUuid = null;
+		String lockValue = UUID.randomUUID().toString();
+		boolean success = false;
 		try {
 			String decryptToken = Base64CoderUtil.decrypt(token);
 			String aesKey = Md5CoderUtil.len16(apiKey + decryptToken.substring(0, 16));
 			decryptToken = AesCoderUtil.decrypt(decryptToken.substring(32), aesKey);
-			String decryptUuid = decryptToken.substring(32);
-			String savedToken = (String) redisUtil.get(decryptUuid.replace("-", ""));
-			
-			if (token.equals(savedToken)) {
-				redisUtil.del(decryptUuid);
-				return true;
+			decryptUuid = decryptToken.substring(32).replace("-", "");
+			if (redisUtil.hsetIfNull("verifyTokenLock", decryptUuid, lockValue, TOKEN_EXPIRE_SECONDS)) {
+				String savedToken = (String) redisUtil.get(decryptUuid);
+				
+				if (token.equals(savedToken)) {
+					redisUtil.del(decryptUuid);
+					success = true;
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			success = false;
+		} finally {
+			if (decryptUuid != null) {
+				String lockedValue = TypeParseUtil.convertToString(redisUtil.hget("verifyTokenLock", decryptUuid));
+				
+				if (lockedValue.equals(lockValue)) {
+					redisUtil.hdel("verifyTokenLock", decryptUuid);
+					System.out.println("Token UUID: " + decryptUuid + " is released, and verify result is " + success);
+				} else {
+					System.out.println("Token UUID: " + decryptUuid + " is locked, reject verify, and verify result is " + success);
+				}
+			}
 		}
-		return false;
+		return success;
 	}
 	
 	/**
