@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+	<head th:replace="common/head :: commonHead(~{::title}, ~{::link})">
+		<title>首页 - 可信验</title>
+		<link href="css/bootstrap/bootstrap-datetimepicker.min.css" rel="stylesheet">
+		<link href="css/website/common.css" rel="stylesheet">
+	</head>
+	<body>
+		<div th:replace="common/header :: globalHeader"></div>
+		
+		<div class="jumbotron verifyMainContent">
+			<div class="container">
+				<div class="websiteBox">
+					<h4 class="pageTitle">
+						<span>
+							<i class="glyphicon glyphicon-hand-right"></i>
+							首页
+						</span>
+					</h4>
+					<div class="row">
+						<div class="col-md-12 timeLineChart">
+							<div class="form-inline timeLineCond">
+								<input type="text" id="timeFrom" name="timeFrom" class="form-control" placeholder="请选择开始时间" readonly>
+								<span class="yMiddle">-</span>
+								<input type="text" id="timeTo" name="timeTo" class="form-control" placeholder="请选择结束时间" readonly>
+							</div>
+							<div id="indexTimeLineChart" class="chartsCommon"></div>
+						</div>
+						<div class="col-md-8">
+							<div id="indexHourLineChart" class="chartsCommon"></div>
+						</div>
+						<div class="col-md-4">
+							<div id="indexStatePieChart" class="chartsCommon"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div th:replace="common/footer :: globalFooter"></div>
+		
+		<div th:replace="common/script :: commonScript(~{::script})">
+			<script src="js/echarts/echarts.js"></script>
+			<script src="js/echarts/echarts.westeros.js"></script>
+			<script src="js/echarts/echarts.module.js"></script>
+			<script src="js/bootstrap/bootstrap-datetimepicker.min.js"></script>
+			<script src="js/bootstrap/bootstrap-datetimepicker.zh-CN.js"></script>
+			<script src="js/main/index.js"></script>
+		</div>
+	</body>
+</html>

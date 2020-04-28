@@ -13,6 +13,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<springframework.boot.version>2.2.1.RELEASE</springframework.boot.version>
+		<springframework.session.version>2.2.2.RELEASE</springframework.session.version>
 		<mybatis.spring.version>2.1.1</mybatis.spring.version>
 		<mysql.version>8.0.18</mysql.version>
 		<projectlombok.version>1.16.20</projectlombok.version>
@@ -28,6 +29,7 @@
 		<javax.servlet-api.version>4.0.1</javax.servlet-api.version>
 		<json.version>20190722</json.version>
 		<coobird.version>0.4.8</coobird.version>
+		<javax.mail.version>1.5.0-b01</javax.mail.version>
 	</properties>
 
 	<dependencies>
@@ -88,6 +90,12 @@
 					<artifactId>lettuce-core</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session-data-redis</artifactId>
+			<version>${springframework.session.version}</version>
 		</dependency>
 		
 		<dependency>
@@ -192,6 +200,12 @@
 			<groupId>net.coobird</groupId>
 			<artifactId>thumbnailator</artifactId>
 			<version>${coobird.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>${javax.mail.version}</version>
 		</dependency>
 	</dependencies>
 	

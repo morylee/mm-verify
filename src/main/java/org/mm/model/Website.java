@@ -1,11 +1,29 @@
 package org.mm.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import org.mm.core.captcha.CaptchaMode;
 
 @SuppressWarnings("serial")
 public class Website implements Serializable {
 
+	public static final Integer USER_MAX_WEBSITE_COUNT = 3;
+	
+	public static final List<Integer> SEC_MODE_LIST = new ArrayList<>();
+	public static final Integer THEME_NUM_MIN = 0;
+	public static final Integer THEME_NUM_MAX = 6;
+	public static final Double SCALING_RATIO_MIN = 0.8;
+	public static final Double SCALING_RATIO_MAX = 1.5;
+	
+	static {
+		SEC_MODE_LIST.add(CaptchaMode.Auto.getValue());
+		SEC_MODE_LIST.add(CaptchaMode.Click.getValue());
+		SEC_MODE_LIST.add(CaptchaMode.Drag.getValue());
+	}
+	
 	public enum State {
 		Default("正常", 0), Deleted("已删除", 1);
 		
@@ -32,9 +50,39 @@ public class Website implements Serializable {
 			}
 		}
 	}
+	
+	public enum SecLevel {
+		Low(1, "低级"), Middle(2, "中级"), High(3, "高级");
+		
+		private Integer value;
+		private String name;
+		
+		private SecLevel(Integer value, String name) {
+			this.value = value;
+			this.name = name;
+		}
+		
+		public Integer getValue() {
+			return this.value;
+		}
+		public String getName() {
+			return this.name;
+		}
+		public static SecLevel valueOf(Integer value) {
+			switch (value) {
+			case 2:
+				return Middle;
+			case 3:
+				return High;
+			default:
+				return Low;
+			}
+		}
+	}
 
 	private Long id;
 	private Long accountId;
+	private String name;
 	private String url;
 	private String apiKey;
 	private String webKey;
@@ -58,6 +106,12 @@ public class Website implements Serializable {
 	}
 	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	public String getUrl() {
 		return url;

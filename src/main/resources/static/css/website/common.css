@@ -1,0 +1,83 @@
+.websiteBox {
+	padding-top: 30px;
+}
+.websitesBox {
+	min-height: 520px;
+}
+.rightBorder {
+	border-right: 2px solid #ffffff;
+}
+.themeDisplay {
+	height: 270px;
+	line-height: 270px;
+	text-align: center;
+	position: relative;
+}
+.centerLabel {
+	width: 100%;
+	text-align: center;
+}
+.themeCarousel {
+	width: 450px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-webkit-transform: translateX(-50%) translateY(-50%);
+	-moz-transform: translateX(-50%) translateY(-50%);
+	-o-transform: translateX(-50%) translateY(-50%);
+	-ms-transform: translateX(-50%) translateY(-50%);
+	transform: translateX(-50%) translateY(-50%);
+}
+.themeIndicators {
+	line-height: 1;
+	bottom: 0px;
+}
+.themeCaption {
+	line-height: 1;
+	width: 100%;
+	left: 0px;
+	bottom: 0px;
+	background: rgba(0,0,0,0.35);
+}
+.themeCarousel .display {
+	display: none;
+}
+.themeCarousel:hover .display {
+	display: block;
+}
+.marginLeft10 {
+	margin-left: 10px;
+}
+.openOrClose {
+	margin-left: 10px;
+}
+.glyphicon-eye-open {
+	color: #f0ad4e;
+}
+.glyphicon-eye-close {
+	color: #337ab7;
+}
+.h3 {
+	font-size: 24px;
+	font-weight: 800;
+}
+.radio-inline.radioInline {
+	margin-left: 0;
+	padding-right: 15px;
+}
+.timeLineChart {
+	margin-bottom: 30px;
+}
+.timeLineCond {
+	position: absolute;
+	right: 30px;
+	top: 10px;
+	z-index: 999;
+}
+.yMiddle {
+	vertical-align: middle;
+}
+.topRightBtn {
+	float: right;
+	margin-top: -6px;
+}

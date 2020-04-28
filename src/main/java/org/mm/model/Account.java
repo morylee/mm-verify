@@ -32,16 +32,47 @@ public class Account implements Serializable {
 			}
 		}
 	}
+	
+	public enum RoleType {
+		SuperUser("超级用户", 0), User("普通用户", 1);
+		
+		private final String name;
+		private final Integer value;
+		
+		private RoleType(String name, Integer value) {
+			this.name = name;
+			this.value = value;
+		}
+		public Integer getValue() {
+			return this.value;
+		}
+		public String getName() {
+			return this.name;
+		}
+		public boolean is(Integer value) {
+			return value != null && this.value.intValue() == value.intValue();
+		}
+		
+		public static RoleType valueOf(Integer value) {
+			switch (value) {
+			case 0:
+				return SuperUser;
+			default:
+				return User;
+			}
+		}
+	}
 
 	private Long id;
 	private String name;
 	private String mobile;
 	private String email;
 	private String password;
+	private String confirmPassword;
 	private Integer roleType;
 	private Integer state;
 	private Date createdAt;
-	private Date updateAt;
+	private Date updatedAt;
 	
 	public Long getId() {
 		return id;
@@ -73,6 +104,12 @@ public class Account implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
 	public Integer getRoleType() {
 		return roleType;
 	}
@@ -94,11 +131,11 @@ public class Account implements Serializable {
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
-	public Date getUpdateAt() {
-		return updateAt;
+	public Date getUpdatedAt() {
+		return updatedAt;
 	}
-	public void setUpdateAt(Date updateAt) {
-		this.updateAt = updateAt;
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 }

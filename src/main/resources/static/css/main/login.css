@@ -1,0 +1,103 @@
+.indexBox {
+	min-width: 1050px;
+	text-align: center;
+}
+.indexContent {
+	width: 1050px;
+	display: inline-block;
+}
+.loginBox {
+	float: left;
+	width: 330px;
+	padding: 60px 0px 0px 0px;
+	margin-right: 40px;
+}
+.loginBox .form-group {
+	width: 300px;
+	height: 40px;
+	margin-bottom: 20px;
+}
+.mainTabs {
+	width: 300px;
+	margin: 0 auto;
+}
+.mainTabs li {
+	width: 50%;
+	text-align: center;
+}
+.mainTabs li a {
+	height: 30px;
+	line-height: 0.75;
+	color: #555;
+}
+.tabContent {
+	padding-top: 20px;
+}
+.loginBtn {
+	width: 100%;
+}
+.captchaInput {
+	float: left;
+	width: 185px;
+}
+.sendCaptchaBtn {
+	float: right;
+	width: 100px;
+}
+.demoBox {
+	float: left;
+	padding: 60px 0px 0px 0px;
+}
+.demoCarousel {
+	float: left;
+	width: 450px;
+}
+.demoCarousel .display {
+	display: none;
+}
+.demoCarousel:hover .display {
+	display: block;
+}
+.demoIndicators {
+	bottom: 0px;
+}
+.demoCaption {
+	width: 100%;
+	left: 0px;
+	bottom: 0px;
+	background: rgba(0,0,0,0.35);
+}
+.verifyInfoBox {
+	float: left;
+	width: 200px;
+	padding-left: 15px;
+}
+.mainTip {
+	display: inline-block;
+	margin: 0px;
+	padding: 20.25px;
+	width: 100%;
+	text-align: center;
+	border: 1px solid #d3d3d3;
+	border-bottom: none;
+	color: #ffffff;
+}
+.mainTip:last-child {
+	border-bottom: 1px solid #d3d3d3;
+}
+.mainTip.one {
+	background: #ffcc00;
+}
+.mainTip.two {
+	background: #66bb55;
+}
+.mainTip.three {
+	background: #ff8800;
+}
+.mainTip.four {
+	background: #55bbdd;
+}
+.mainTipDetail {
+	width: 260px;
+	float: left;
+}

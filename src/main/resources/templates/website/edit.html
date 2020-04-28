@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+	<head th:replace="common/head :: commonHead(~{::title}, ~{::link})">
+		<title>设置网站 - 可信验</title>
+		<link href="css/website/common.css" rel="stylesheet">
+	</head>
+	<body>
+		<div th:replace="common/header :: globalHeader"></div>
+		
+		<div class="jumbotron verifyMainContent">
+			<div class="container">
+				<div class="websiteBox">
+					<form id="websiteForm">
+						<h4 class="pageTitle">
+							<span>
+								<i class="glyphicon glyphicon-hand-right"></i>
+								设置网站
+							</span>
+							<button type="button" id="updateWebsiteBtn" class="btn btn-primary topRightBtn">提交</button>
+						</h4>
+						<div class="row">
+							<input type="hidden" id="webKey" name="webKey" th:value="${webKey}">
+							<div class="col-md-6 rightBorder">
+								<div id="websiteInfo"></div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="" class="centerLabel">主题展示</label>
+									<div class="themeDisplay" id="themeDisplay">
+										<img src="images/website/loading.gif">
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<div th:replace="common/footer :: globalFooter"></div>
+		
+		<div th:replace="common/script :: commonScript(~{::script})">
+			<script src="js/theme/common.js"></script>
+			<script src="js/website/form.js"></script>
+			<script src="js/website/edit.js"></script>
+		</div>
+	</body>
+</html>

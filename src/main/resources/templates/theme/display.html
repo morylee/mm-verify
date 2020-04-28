@@ -1,0 +1,28 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+	<div th:fragment="themeDisplay">
+		<div id="themeCarousel" class="carousel slide themeCarousel" th:style="'width: ' + ${themeWidth} + 'px'">
+			<!-- 轮播（Carousel）指标 -->
+			<ol class="carousel-indicators themeIndicators">
+				<li data-target="#themeCarousel" th:each="background : ${backgrounds}" th:attr="data-slide-to=${backgroundStat.index}" th:classappend="${backgroundStat.index == 0} ? 'active' : ''"></li>
+			</ol>
+			<!-- 轮播（Carousel）项目 -->
+			<div class="carousel-inner">
+				<div class="item" th:each="background : ${backgrounds}" th:classappend="${backgroundStat.index == 0} ? 'active' : ''">
+					<img th:src="'data:image/png;base64,' + ${background}">
+				</div>
+			</div>
+			<!-- 轮播（Carousel）导航 -->
+			<a class="left carousel-control" href="#themeCarousel" role="button" data-slide="prev">
+				<span class="glyphicon glyphicon-chevron-left display" aria-hidden="true"></span>
+				<span class="sr-only">Previous</span>
+			</a>
+			<a class="right carousel-control" href="#themeCarousel" role="button" data-slide="next">
+				<span class="glyphicon glyphicon-chevron-right display" aria-hidden="true"></span>
+				<span class="sr-only">Next</span>
+			</a>
+		</div>
+		<script type="text/javascript">
+			$("#themeCarousel").carousel('cycle');
+		</script>
+	</div>
+</html>

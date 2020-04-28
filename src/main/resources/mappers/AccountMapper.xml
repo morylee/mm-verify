@@ -8,7 +8,7 @@
 		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
 		<result column="email" property="email" jdbcType="VARCHAR" />
 		<result column="encrypted_pwd" property="password" jdbcType="VARCHAR" />
-		<result column="role_type" property="name" jdbcType="INTEGER" />
+		<result column="role_type" property="roleType" jdbcType="INTEGER" />
 		<result column="state" property="state" jdbcType="INTEGER" />
 		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
 		<result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
@@ -18,11 +18,37 @@
 		id, name, mobile, email, encrypted_pwd, role_type, state, created_at, updated_at
 	</sql>
 	
-	<select id="find" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+	<insert id="add" parameterType="org.mm.model.Account" useGeneratedKeys="true" keyProperty="id">
+		insert into mm_account (name, mobile, email, encrypted_pwd, role_type, state, created_at, updated_at)
+		values(#{name}, #{mobile}, #{email}, #{password}, #{roleType}, #{state}, sysdate(), sysdate())
+	</insert>
+	
+	<select id="update" parameterType="org.mm.model.Account">
+		update mm_account set
+			name = #{name},
+			mobile = #{mobile},
+			email = #{email},
+			encrypted_pwd = #{password},
+			state = #{state},
+			updated_at = sysdate()
+		where id = #{id}
+	</select>
+	
+	<select id="findByParams" resultMap="BaseResultMap" parameterType="java.util.Map" >
 		select
 		<include refid="BaseColumnList" />
 		from mm_account
-		where id = #{id}
+		<where>
+			<if test="id != null">
+				id = #{id}
+			</if>
+			<if test="email != null and email != ''">
+				and email = #{email}
+			</if>
+			<if test="mobile != null and mobile != ''">
+				and mobile = #{mobile}
+			</if>
+		</where>
 	</select>
 	
 </mapper>

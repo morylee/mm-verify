@@ -44,4 +44,66 @@
 		</where>
 	</select>
 	
+	<select id="countDate" resultType="java.util.Map">
+		select
+		<choose>
+			<when test="dateType == 0">
+				CONCAT(DATE_FORMAT(created_at, '%Y%m%d%H'), FLOOR((DATE_FORMAT(created_at, '%i') + 15) / 15)) as dateNum,
+			</when>
+			<when test="dateType == 1">
+				DATE_FORMAT(created_at, '%Y%m%d%H') as dateNum,
+			</when>
+			<when test="dateType == 2">
+				DATE_FORMAT(created_at, '%Y%m%d%p') as dateNum,
+			</when>
+			<when test="dateType == 3">
+				DATE_FORMAT(created_at, '%Y%m%d') as dateNum,
+			</when>
+			<when test="dateType == 4">
+				DATE_FORMAT(created_at, '%Y%m') as dateNum,
+			</when>
+			<when test="dateType == 5">
+				CONCAT(DATE_FORMAT(created_at, '%Y'), FLOOR((DATE_FORMAT(created_at, '%c') + 2) / 3)) as dateNum,
+			</when>
+			<when test="dateType == 6">
+				DATE_FORMAT(created_at, '%Y') as dateNum,
+			</when>
+			<otherwise>
+				DATE_FORMAT(created_at, #{dateFormat}) as dateNum,
+			</otherwise>
+		</choose>
+		count(id) as `count` from mm_captcha
+		<where>
+			<if test="webKey != null and webKey != ''">
+				web_key = #{webKey}
+			</if>
+			<if test="timeFrom != null">
+				and created_at &gt;= #{timeFrom}
+			</if>
+			<if test="timeTo != null">
+				and created_at &lt; #{timeTo}
+			</if>
+		</where>
+		group by (dateNum)
+		order by dateNum
+	</select>
+	
+	<select id="countState" resultType="java.util.Map">
+		select state, count(id) as `count`
+		from mm_captcha
+		<where>
+			<if test="webKey != null and webKey != ''">
+				web_key = #{webKey}
+			</if>
+			<if test="timeFrom != null">
+				and created_at &gt;= #{timeFrom}
+			</if>
+			<if test="timeTo != null">
+				and created_at &lt; #{timeTo}
+			</if>
+		</where>
+		group by (`state`)
+		order by `state`
+	</select>
+	
 </mapper>

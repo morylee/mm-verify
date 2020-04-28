@@ -1,0 +1,32 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+	<div class="globalHeader" th:fragment="globalHeader">
+		<nav class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="/">可信验</a>
+					<a class="navbar-brand" href="https://www.cloudcrowd.com.cn" target="_blank">云众可信</a>
+				</div>
+				<div class="collapse navbar-collapse navbar-right" id="rightNav">
+					<ul class="nav navbar-nav">
+						<!-- <li th:if="${ globalUserInfo == null }"><a href="/login">登录/注册</a></li> -->
+						<li th:if="${ globalUserInfo != null }"><a href="/website/index">我的网站</a></li>
+						<li th:if="${ globalUserInfo != null }"><a href="/website/new">添加网站</a></li>
+						<li class="dropdown dropdown_feature" th:if="${ globalUserInfo != null }">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="">我的<span class="caret"></span></a>
+							<ul class="dropdown-menu features_menu">
+								<li><a href="/profile"><i class="glyphicon glyphicon-user"></i>&nbsp;<span th:text="${globalUserInfo.name}"></span></a></li>
+								<li><a href="/logout"><i class="glyphicon glyphicon-log-out"></i>&nbsp;退出</a></li>
+							</ul>
+						</li>
+	 				</ul>
+				</div>
+			</div>
+		</nav>
+	</div>
+</html>

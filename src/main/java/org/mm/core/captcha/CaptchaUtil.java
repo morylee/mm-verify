@@ -1,6 +1,10 @@
 package org.mm.core.captcha;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,6 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -22,6 +27,7 @@ import org.mm.core.security.Base64CoderUtil;
 import org.mm.core.security.Md5CoderUtil;
 import org.mm.core.security.RsaCoderUtil;
 import org.mm.core.util.ClientKeyUtil;
+import org.mm.core.util.ImageUtil;
 import org.mm.core.util.ImgCompressUtil;
 import org.mm.core.util.RandomUtil;
 import org.mm.core.util.RedisUtil;
@@ -447,6 +453,48 @@ public class CaptchaUtil {
 		} else {
 			return ImgCompressUtil.resizeRatio(filePath, DEFAULT_WIDTH, DEFAULT_HEIGHT, ratio, sb.toString());
 		}
+	}
+	
+	public static List<String> backgrounds(Integer themeNum, Double ratio) {
+		List<String> backgrounds = new ArrayList<>();
+		if (themeNum != null) {
+			StringBuilder sb = new StringBuilder(BASE_DIR);
+			sb.append(File.separator).append(BASE_THEME).append(themeNum);
+			String baseBgDir = sb.toString();
+			
+			File file = new File(baseBgDir);
+			if (file.exists()) {
+				Pattern pattern = Pattern.compile("^" + BASE_BACKGROUND + "([0-9]*)\\." + BASE_IMG_TYPE + "$", Pattern.CASE_INSENSITIVE);
+				Matcher matcher;
+				
+				sb.append(File.separator).append(ratio);
+				String ratioDir = sb.toString();
+				File ratioFile = new File(ratioDir);
+				if (!ratioFile.exists()) ratioFile.mkdirs();
+				
+				File[] list = file.listFiles();
+				BufferedImage bufferedImage;
+				for (File f: list) {
+					matcher = pattern.matcher(f.getName());
+					if (f.isFile() && matcher.matches()) {
+						try {
+							String raitoPath = ratioDir + File.separator + f.getName();
+							File ratioF = new File(raitoPath);
+							if (!ratioF.exists())
+								raitoPath = ImgCompressUtil.resizeRatio(f.getAbsolutePath(), DEFAULT_WIDTH, DEFAULT_HEIGHT, ratio, raitoPath);
+							bufferedImage = ImageIO.read(new FileInputStream(raitoPath));
+							backgrounds.add(ImageUtil.getImageBASE64(bufferedImage));
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+		
+		return backgrounds;
 	}
 	
 	/**

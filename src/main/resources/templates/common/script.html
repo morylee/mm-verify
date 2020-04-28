@@ -1,0 +1,15 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+	<div th:fragment="commonScript(scripts)">
+		<script src="js/jquery/jquery-3.4.1.min.js"></script>
+		<script src="js/jquery/jquery.validate.min.js"></script>
+		<script src="js/jquery/toastr.min.js"></script>
+		<script src="js/jquery/ajaxhook.min.js"></script>
+		<script src="js/jquery/jquery.ext.js"></script>
+		<script src="js/bootstrap/bootstrap.min.js"></script>
+		<script src="js/common/IEOrGoogle.js"></script>
+		<script src="js/common/toastrConfig.js"></script>
+		<script src="js/common/common.js"></script>
+		
+		<th:block th:replace="${scripts}" />
+	</div>
+</html>

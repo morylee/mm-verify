@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+	<head th:replace="common/head :: commonHead(~{::title}, ~{::link})">
+		<title>我的网站 - 可信验</title>
+		<link href="css/website/common.css" rel="stylesheet">
+	</head>
+	<body>
+		<div th:replace="common/header :: globalHeader"></div>
+		
+		<div class="jumbotron verifyMainContent">
+			<div class="container">
+				<div class="websiteBox">
+					<div id="websitesBox" class="websitesBox" th:fragment="websites">
+						<h4 class="pageTitle">
+							<span>
+								<i class="glyphicon glyphicon-hand-right"></i>
+								我的网站
+							</span>
+						</h4>
+						<table class="table table-hover text-center">
+							<thead>
+								<tr>
+									<td>序号</td>
+									<td>名称</td>
+									<td>网址</td>
+									<td>webKey</td>
+									<td>apiKey</td>
+									<td>创建日期</td>
+									<td>操作</td>
+								</tr>
+							</thead>
+							<tbody style="background: #ffffff;">
+								<tr th:each="website : ${websites}">
+									<td th:text="${websiteStat.index + 1}"></td>
+									<td th:text="${website.name}"></td>
+									<td th:text="${website.url}"></td>
+									<td th:text="${website.webKey}"></td>
+									<td>
+										<div th:replace="website/apikey :: apiKeyInfo(${website.webKey}, ${website.apiKey}, null)"></div>
+									</td>
+									<td th:text="${website.createdDate}"></td>
+									<td class="operatorCol">
+										<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											操作<span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu local-menu">
+											<li><a th:href="@{'website/' + ${website.webKey}}"><i class="glyphicon glyphicon-tags"></i>&nbsp;详情</a></li>
+											<li><a th:href="@{'website/setup/' + ${website.webKey}}"><i class="glyphicon glyphicon-cog"></i>&nbsp;设置</a></li>
+											<li><a href="javascript: void(0);" class="delWebsite" th:attr="data-webkey=${website.webKey}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a th:href="@{'website/monitor/' + ${website.webKey}}"><i class="glyphicon glyphicon-stats"></i>&nbsp;实时监控</a></li>
+										</ul>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div th:replace="common/pagination :: globalPagination('websitesBox', 'website/search', null)"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div th:replace="common/popup :: globalPwdCheck(null)"></div>
+		<div th:replace="common/popup :: globalConfirm('danger' ,'删除网站将无法撤回，是否确定删除？')"></div>
+		
+		<div th:replace="common/footer :: globalFooter"></div>
+		
+		<div th:replace="common/script :: commonScript(~{::script})">
+			<script src="js/jquery/jquery.sha1.js"></script>
+			<script src="js/website/common.js"></script>
+			<script src="js/website/index.js"></script>
+		</div>
+	</body>
+</html>

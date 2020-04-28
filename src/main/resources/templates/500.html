@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+	<head th:replace="common/head :: commonHead(~{::title}, ~{})">
+		<title>500 - 可信验</title>
+	</head>
+	<body>
+		<div th:replace="common/header :: globalHeader"></div>
+		
+		<div class="jumbotron verifyMainContent">
+			<div class="container">
+				<div class="errorContent">
+					<div class="errorInfo">系统出错啦！</div>
+					<div>
+						<a href="javascript: history.back(-1);" class="btn btn-primary"><i class="glyphicon glyphicon-arrow-left"></i>&nbsp;返回</a>
+						<a href="/" class="btn btn-info"><i class="glyphicon glyphicon-home"></i>&nbsp;首页</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div th:replace="common/footer :: globalFooter"></div>
+		
+		<div th:replace="common/script :: commonScript(~{})"></div>
+	</body>
+</html>

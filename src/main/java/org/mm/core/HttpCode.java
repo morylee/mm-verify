@@ -1,44 +1,47 @@
 package org.mm.core;
 
+import org.mm.core.config.Resources;
+
 /**
  * Ajax 请求时的自定义查询状态码，主要参考Http状态码，但并不完全对应
+ * 
+ * @author LiChenhui
+ * @version 2017年9月5日 16点48分
  */
 public enum HttpCode {
 	/** 200请求成功 */
-	OK(200, "操作成功"),
+	OK(200),
 	/** 207频繁操作 */
-	MULTI_STATUS(207, "操作频繁"),
+	MULTI_STATUS(207),
 	/** 302已经存在*/
-	ALREADY_EXIST(302, "已经存在"),
+	ALREADY_EXIST(302),
 	/** 303登录失败 */
-	LOGIN_FAIL(303, "登录失败"),
+	LOGIN_FAIL(303),
 	/** 400请求参数出错 */
-	BAD_REQUEST(400, "参数错误"),
+	BAD_REQUEST(400),
 	/** 401没有登录 */
-	UNAUTHORIZED(401, "没有登录"),
+	UNAUTHORIZED(401),
 	/** 403没有权限 */
-	FORBIDDEN(403, "没有权限"),
+	FORBIDDEN(403),
 	/** 404找不到页面 */
-	NOT_FOUND(404, "未找到资源"),
+	NOT_FOUND(404),
 	/** 408请求超时 */
-	REQUEST_TIMEOUT(408, "操作超时"),
+	REQUEST_TIMEOUT(408),
 	/** 409发生冲突 */
-	CONFLICT(409, "资源冲突"),
+	CONFLICT(409),
 	/** 410已被删除 */
-	GONE(410, "资源已删除"),
+	GONE(410),
 	/** 417执行失败*/
-	FAILED(417, "操作失败"),
+	FAILED(417),
 	/** 423已被锁定 */
-	LOCKED(423, "已被锁定"),
+	LOCKED(423),
 	/** 500服务器出错 */
-	INTERNAL_SERVER_ERROR(500, "服务器出错");
+	INTERNAL_SERVER_ERROR(500);
 
 	private final Integer value;
-	private final String msg;
 
-	private HttpCode(Integer value, String msg) {
+	private HttpCode(Integer value) {
 		this.value = value;
-		this.msg = msg;
 	}
 
 	/**
@@ -49,7 +52,7 @@ public enum HttpCode {
 	}
 
 	public String msg() {
-		return this.msg;
+		return Resources.getMessage("HTTPCODE_" + this.value);
 	}
 
 	public String toString() {

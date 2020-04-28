@@ -1,0 +1,46 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+	<div th:fragment="websiteForm">
+		<div class="form-group">
+			<label for="name">网站名称</label>
+			<input type="text" class="form-control" id="name" name="name" placeholder="请输入网站名称" autocomplete="off" th:value="${website.name}">
+		</div>
+		<div class="form-group">
+			<label for="url">网站地址</label>
+			<input type="text" class="form-control" id="url" name="url" placeholder="请输入网站地址" autocomplete="off" th:value="${website.url}">
+		</div>
+		<div class="form-group">
+			<label for="">主题图库</label>
+			<div class="form-control multipleInput autoHeight">
+				<label class="radio-inline radioInline">
+					<input type="radio" name="themeNum" id="themeNum" checked="checked" value=""> <span>随机</span>
+				</label>
+				<label class="radio-inline radioInline" th:each="theme : ${themes}">
+					<input type="radio" class="themeItem" name="themeNum" th:attr="id='themeNum' + ${theme.value},checked=${theme.value==website.themeNum}" th:value="${theme.value}"> <span th:text="${theme.name}"></span>
+				</label>
+			</div>
+		</div>
+		<div class="form-group inlineGroup">
+			<div class="col-md-4 noPadding">
+				<label for="scalingRatio">缩放比例</label>
+				<select class="form-control" id="scalingRatio" name="scalingRatio">
+					<option value="">请选择缩放比例</option>
+					<option th:each="scalingRatio : ${scalingRatios}" th:attr="selected=${scalingRatio==website.scalingRatio}" th:value="${scalingRatio}" th:text="${scalingRatio + '倍'}"></option>
+				</select>
+			</div>
+			<div class="col-md-4 noPadding">
+				<label for="secMode">验证模式</label>
+				<select class="form-control" id="secMode" name="secMode">
+					<option value="">请选择验证模式</option>
+					<option th:each="secMode : ${secModes}" th:attr="selected=${secMode.value==website.secMode}" th:value="${secMode.value}" th:text="${secMode.name}"></option>
+				</select>
+			</div>
+			<div class="col-md-4 noPadding">
+				<label for="secLevel">安全级别</label>
+				<select class="form-control" id="secLevel" name="secLevel">
+					<option value="">请选择安全级别</option>
+					<option th:each="secLevel : ${secLevels}" th:attr="selected=${secLevel.value==website.secLevel}" th:value="${secLevel.value}" th:text="${secLevel.name}"></option>
+				</select>
+			</div>
+		</div>
+	</div>
+</html>

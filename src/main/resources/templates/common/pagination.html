@@ -1,0 +1,15 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+	<div align="center" class="paginationBox default" th:fragment="globalPagination(renderId, reqUrl, formId)" th:if="${totalPage != null && totalPage > 1}" th:attr="data-render-id=${renderId},data-req-url=${reqUrl},data-form-id=${formId}">
+		<div align="center" th:with="numBtnCount=7,midBtnCount=3,pageEnough=${totalPage > numBtnCount}">
+			<span class="pageBtn firstPage" title="首页" th:classappend="${page == 1} ? 'disabled' : ''" data-page="1"><i class="glyphicon glyphicon-fast-backward"></i></span>
+			<span class="pageBtn prePage" title="上一页" th:classappend="${page == 1} ? 'disabled' : ''" th:attr="data-page=${page == 1 ? 1 : page - 1}"><i class="glyphicon glyphicon-step-backward"></i></span>
+			<span class="pageBtn numPage" th:unless="${pageEnough}" th:each="i :${#numbers.sequence(1, totalPage)}" th:classappend="${page == i} ? 'disabled current' : ''" th:attr="data-page=${i}" th:text="${i}"></span>
+			<span class="pageBtn numPage" th:if="${pageEnough && page <= midBtnCount}" th:each="i :${#numbers.sequence(1, numBtnCount)}" th:classappend="${page == i} ? 'disabled current' : ''" th:attr="data-page=${i}" th:text="${i}"></span>
+			<span class="pageBtn numPage" th:if="${pageEnough && page >= totalPage - midBtnCount}" th:each="i :${#numbers.sequence(totalPage - numBtnCount + 1, totalPage)}" th:classappend="${page == i} ? 'disabled current' : ''" th:attr="data-page=${i}" th:text="${i}"></span>
+			<span class="pageBtn numPage" th:if="${pageEnough && page > midBtnCount && page < totalPage - midBtnCount}" th:each="i :${#numbers.sequence(page - midBtnCount, page + numBtnCount - midBtnCount - 1)}" th:classappend="${page == i} ? 'disabled current' : ''" th:attr="data-page=${i}" th:text="${i}"></span>
+			<span class="pageBtn nextPage" title="下一页" th:classappend="${page == totalPage} ? 'disabled' : ''" th:attr="data-page=${page == totalPage ? totalPage : page+1}"><i class="glyphicon glyphicon-step-forward"></i></span>
+			<span class="pageBtn lastPage" title="尾页" th:classappend="${page == totalPage} ? 'disabled' : ''" th:attr="data-page=${totalPage}"><i class="glyphicon glyphicon-fast-forward"></i></span>
+		</div>
+		<script src="js/common/pagination.js"></script>
+	</div>
+</html>

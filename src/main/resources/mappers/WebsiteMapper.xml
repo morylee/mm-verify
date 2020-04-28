@@ -5,6 +5,7 @@
 	<resultMap id="BaseResultMap" type="org.mm.model.Website" >
 		<id column="id" property="id" jdbcType="INTEGER" />
 		<result column="account_id" property="accountId" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="url" property="url" jdbcType="VARCHAR" />
 		<result column="api_key" property="apiKey" jdbcType="VARCHAR" />
 		<result column="web_key" property="webKey" jdbcType="VARCHAR" />
@@ -19,8 +20,30 @@
 	</resultMap>
 	
 	<sql id="BaseColumnList" >
-		id, account_id, url, api_key, web_key, sec_level, sec_mode, icon_type, theme_num, scaling_ratio, state, created_at, updated_at
+		id, account_id, name, url, api_key, web_key, sec_level, sec_mode, icon_type, theme_num, scaling_ratio, state, created_at, updated_at
 	</sql>
+	
+	<insert id="add" parameterType="org.mm.model.Website" useGeneratedKeys="true" keyProperty="id">
+		insert into mm_website (account_id, name, url, api_key, web_key, sec_level, sec_mode,
+			icon_type, theme_num, scaling_ratio, state, created_at, updated_at)
+		values(#{accountId}, #{name}, #{url}, #{apiKey}, #{webKey}, #{secLevel}, #{secMode},
+			#{iconType}, #{themeNum}, #{scalingRatio}, #{state}, sysdate(), sysdate())
+	</insert>
+	
+	<update id="update" parameterType="org.mm.model.Website">
+		update mm_website set
+			name = #{name},
+			url = #{url},
+			sec_level = #{secLevel},
+			sec_mode = #{secMode},
+			icon_type = #{iconType},
+			theme_num = #{themeNum},
+			scaling_ratio = #{scalingRatio},
+			state = #{state},
+			updated_at = sysdate()
+		where
+			id = #{id}
+	</update>
 	
 	<select id="findByParams" resultMap="BaseResultMap" parameterType="java.util.Map" >
 		select
@@ -32,6 +55,34 @@
 			</if>
 			<if test="webKey != null and webKey != ''">
 				and web_key = #{webKey}
+			</if>
+			<if test="state != null">
+				and state = #{state}
+			</if>
+		</where>
+	</select>
+	
+	<select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select * from mm_website
+		<where>
+			<if test="accountId != null">
+				account_id = #{accountId}
+			</if>
+			<if test="state != null">
+				and state = #{state}
+			</if>
+		</where>
+		order by created_at desc, id desc
+		<if test="from != null and pageSize != null">
+			limit #{from}, #{pageSize}
+		</if>
+	</select>
+	
+	<select id="count" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(id) from mm_website
+		<where>
+			<if test="accountId != null">
+				account_id = #{accountId}
 			</if>
 			<if test="state != null">
 				and state = #{state}

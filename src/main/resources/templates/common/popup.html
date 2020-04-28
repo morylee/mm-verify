@@ -1,0 +1,42 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+	<div class="modal fade" id="globalConfirm" th:fragment="globalConfirm(type, message)">
+		<div class="modal-backdrop in" style="opacity: 0;"></div>
+		<div class="modal-dialog modalContent">
+			<div class="modal-content">
+				<div class="modal-header">
+					<span class="glyphicon glyphicon-alert" th:classappend="${type == null ? 'danger' : type}">&nbsp;</span>操作确认！
+					<button type="button" class="close" data-dismiss="modal">
+						<i style="font-size: 20px;" class="glyphicon glyphicon-remove"></i>
+					</button>
+				</div>
+				<div class="modal-body" id="confirmMessage" th:text="${message == null ? '是否确定删除？' : message}"></div>
+				<div class="modal-footer modalFooter">
+					<button class="btn" id="confirmOkBtn" th:classappend="'btn-' + ${type == null ? 'danger' : type}">确定</button>
+					<button class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="globalPwdCheck" th:fragment="globalPwdCheck(message)">
+		<div class="modal-backdrop in" style="opacity: 0;"></div>
+		<div class="modal-dialog modalContent">
+			<div class="modal-content">
+				<div class="modal-header">
+					<span class="glyphicon glyphicon-alert primary">&nbsp;</span>身份确认！
+					<button type="button" class="close" data-dismiss="modal">
+						<i style="font-size: 20px;" class="glyphicon glyphicon-remove"></i>
+					</button>
+				</div>
+				<div class="modal-body" id="pwdCheckContent">
+					<form id="pwdCheckForm" novalidate>
+						<input type="password" id="password" name="password" class="form-control" th:attr="placeholder=${message == null ? '请输入登录密码' : message}">
+					</form>
+				</div>
+				<div class="modal-footer modalFooter">
+					<button class="btn btn-primary" id="pwdCheckOkBtn">确定</button>
+					<button class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</html>

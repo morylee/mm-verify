@@ -1,0 +1,166 @@
+a:hover {
+	text-decoration: none;
+}
+.textCenter {
+	text-align: center;
+}
+.hide {
+	display: none;
+}
+.inlineGroup{
+	position: relative;
+	display: inline-block;
+	width: 100%;
+}
+.noPadding {
+	padding: 0px;
+}
+.noPaddingLeft {
+	padding-left: 0px;
+}
+.noPaddingRight {
+	padding-right: 0px;
+}
+.autoHeight {
+	height: auto;
+}
+.pageTitle {
+	margin-bottom: 25px;
+}
+.pageTitle span {
+	border-bottom: 2px solid #337ab7;
+	padding-bottom: 5px;
+}
+.pageTitle span i.glyphicon-hand-right {
+	color: #337ab7;
+}
+.cutLine {
+	border-top: 2px solid #ffffff;
+}
+.jumbotron {
+	overflow-x: none;
+	font-family: 黑体;
+}
+.commonBox {
+	height: 40px;
+}
+.errorContent {
+	padding-top: 30%;
+	text-align: center;
+	vertical-align: middle;
+	min-height: 520px;
+}
+.errorInfo {
+	font-size: 24px;
+	padding-bottom: 20px;
+}
+.inputErrorMsg {
+	color: #d22222;
+	position: absolute;
+	top: 40px;
+	left: 15px;
+}
+.globalFooter {
+	text-align: center;
+	width: 100%;
+	margin-bottom: 20px;
+}
+.globalFooter p a {
+	color: #333;
+}
+.toast-close-button {
+	top: 0px;
+}
+.navbar-right {
+	float: right;
+}
+.operatorCol {
+	position: relative;
+}
+.local-menu {
+	left: inherit;
+	right: 0px;
+}
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+	vertical-align: middle;
+}
+.paginationBox {
+	font-size: 15px;
+	moz-user-select: -moz-none;
+	-moz-user-select: none;
+	-o-user-select:none;
+	-khtml-user-select:none;
+	-webkit-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+}
+.paginationBox.default {
+	color: #666666;
+}
+.pageBtn {
+	padding: 0px 5x;
+	margin-right: 5px;
+	cursor: pointer;
+}
+.pageBtn:last-child {
+	margin-right: 0px;
+}
+.numPage {
+	border: 1px solid #bbbbbb;
+	background: #ffffff;
+	border-radius: 4px;
+	padding: 2px 10px;
+}
+.numPage:hover {
+	background: #666666;
+	color: #ffffff;
+}
+.numPage.current {
+	background: #bbbbbb;
+	color: #ffffff;
+}
+.disabled {
+	color: #bbbbbb;
+	cursor: not-allowed;
+}
+.default {
+	color: #ffffff;
+}
+.primary {
+	color: #337ab7;
+}
+.success {
+	color: #5cb85c;
+}
+.info {
+	color: #5bc0de;
+}
+.warning {
+	color: #f0ad4e;
+}
+.danger {
+	color: #d9534f;
+}
+label.error {
+	color: #d9534f;
+	font-weight: inherit;
+	font-size: 14px;
+}
+.modalContent {
+	z-index: 2901;
+	margin-top: 60px;
+	width: 400px;
+	font-size: 16px;
+}
+.modalFooter {
+	padding: 10px;
+	border-top: none;
+}
+.chartsCommon {
+	width: 100%;
+	height: 400px;
+}
+.verifyMainContent {
+	width: 100%;
+	margin-bottom: 30px;
+}

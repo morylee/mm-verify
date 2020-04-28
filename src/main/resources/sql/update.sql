@@ -116,6 +116,20 @@ ADD COLUMN icon_type INT(2) NULL AFTER sec_mode;
 UPDATE mm_website SET icon_type = 0;
 
 /* 20200310 */
-INSERT INTO `mm_website` (`account_id`, `url`, `api_key`, `web_key`, `sec_level`, `sec_mode`, `icon_type`, `theme_num`, `scaling_ratio`, `state`, `created_at`, `updated_at`)
+INSERT INTO mm_website (account_id, url, api_key, web_key, sec_level, sec_mode, icon_type, theme_num, scaling_ratio, state, created_at, updated_at)
 VALUES (1, 'www.cloudcrowd.com.cn', '029088ad4a7a4dfd9b7acc7c03722054', 'd67a608596d04eedba84c4b3c6564971', 3, 1, 0, 0, 1.0, 0, sysdate(), sysdate()),
 	(1, '*.cloudcrowd.com.cn', '6b87fa888fe84114991bc6c44fb02aea', '28e7c0b54c934934b9519c651b699f9b', 2, 1, 0, 0, 1.0, 0, sysdate(), sysdate());
+
+/* 20200326 */
+ALTER TABLE mm_account CHANGE COLUMN mobile mobile VARCHAR(20) NULL;
+
+ALTER TABLE mm_website ADD COLUMN name VARCHAR(64) NULL AFTER account_id;
+
+update mm_website set name = '云众可信' where web_key = 'bd2b9468833b4043beeb1b8624b5d76c';
+update mm_website set name = 'SecIN社区' where web_key = 'b30a6b9baa444d6c98a21cf37eee8897';
+update mm_website set name = '云众可信' where web_key = '643b1dd9ddb2477d9963f036a988ed7d';
+update mm_website set name = 'SecIN社区' where web_key = 'b7db153be64749799ab48a61ebcf7a1c';
+update mm_website set name = '云众可信' where web_key = 'd67a608596d04eedba84c4b3c6564971';
+update mm_website set name = '云众可信' where web_key = '28e7c0b54c934934b9519c651b699f9b';
+
+update mm_account set role_type = 0 where email = 'yzkx@cloudcrowd.com.cn';

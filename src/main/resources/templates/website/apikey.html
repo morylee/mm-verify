@@ -1,0 +1,7 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+	<div id="apiKey" th:fragment="apiKeyInfo(webKey, apiKey, clazz)" th:classappend="${clazz}">
+		<span class="closeInfo" th:text="${apiKey}"></span>
+		<span class="openInfo hide"></span>
+		<i class="glyphicon glyphicon-eye-open openOrClose" title="查看" th:attr="data-webkey=${webKey}"></i>
+	</div>
+</html>
