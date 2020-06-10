@@ -39,4 +39,9 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal" id="imgFullViewer" th:fragment="imgFullViewer(targets)" th:attr="data-targets=${targets}">
+		<span class="close hide">×</span>
+		<img class="modal-content" id="modelImg">
+		<div id="caption"></div>
+	</div>
 </html>

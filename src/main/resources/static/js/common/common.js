@@ -108,3 +108,7 @@ $(".modal").on("show.bs.modal", function (e) {
 		"margin-top": modalHeight
 	});
 });
+
+$("body").niceScroll({
+	cursorwidth: 10,
+});

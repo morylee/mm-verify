@@ -15,6 +15,7 @@
 				<div class="collapse navbar-collapse navbar-right" id="rightNav">
 					<ul class="nav navbar-nav">
 						<!-- <li th:if="${ globalUserInfo == null }"><a href="/login">登录/注册</a></li> -->
+						<li th:if="${ globalUserInfo != null }"><a href="/dev-center/guide">接入指南</a></li>
 						<li th:if="${ globalUserInfo != null }"><a href="/website/index">我的网站</a></li>
 						<li th:if="${ globalUserInfo != null }"><a href="/website/new">添加网站</a></li>
 						<li class="dropdown dropdown_feature" th:if="${ globalUserInfo != null }">

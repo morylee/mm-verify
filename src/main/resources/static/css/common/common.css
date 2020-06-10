@@ -50,7 +50,7 @@ a:hover {
 	vertical-align: middle;
 	min-height: 520px;
 }
-.errorInfo {
+.errorContent .errorInfo {
 	font-size: 24px;
 	padding-bottom: 20px;
 }

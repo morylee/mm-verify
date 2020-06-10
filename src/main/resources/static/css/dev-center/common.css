@@ -1,0 +1,68 @@
+.devCenterBox {
+	padding-top: 30px;
+	font-family: 宋体;
+}
+.guideBox {
+	min-height: 520px;
+}
+.guideBox .markdown-body p {
+	font-size: 16px;
+}
+.menu_content {
+	width: auto;
+	min-width: 150px;
+	max-height: 600px;
+	position: fixed;
+	background: #fff;
+	border-radius: 5px;
+	box-shadow: 0px 0px 4px 2px rgba(153,153,153,0.2);
+	overflow-y: auto;
+	z-index: 100;
+}
+.guide_content {
+	padding-left: 25%;
+}
+ul.menu_list_1 {
+	padding-top: 15px;
+	padding-left: 0px;
+}
+ul.menu_list_2, ul.menu_list_3 {
+	padding-left: 22px;
+}
+ul.menu_list li {
+	list-style: none;
+	line-height: 28px;
+}
+ul.menu_list li.list_item {
+	list-style: circle;
+	list-style-position: outside;
+	margin-left: 19px;
+}
+ul.menu_list a:active, ul.menu_list a:hover, ul.menu_list a:visited, ul.menu_list a:link {
+	text-decoration: none;
+}
+ul.menu_list_1 li.menu_item_1 a.menu_link_1 {
+	color: inherit;
+	font-size: 17px;
+	font-weight: bold;
+}
+ul.menu_list_2 li.menu_item_2 a.menu_link_2 {
+	color: inherit;
+	font-weight: bold;
+}
+ul.menu_list_3 li.menu_item_3 a.menu_link_3 {
+	color: inherit;
+}
+ul.menu_list_1 li.menu_item_1 a.menu_link_1.current,
+ul.menu_list_2 li.menu_item_2 a.menu_link_2.current,
+ul.menu_list_3 li.menu_item_3 a.menu_link_3.current {
+	color: #337ab7;
+}
+i.glyphicon-triangle-bottom {
+	font-size: 12px;
+	margin-right: 7px;
+	vertical-align: text-top;
+}
+.dropdown-menu:after, .dropdown-menu:before {
+	content: none;
+}

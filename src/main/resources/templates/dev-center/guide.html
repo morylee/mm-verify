@@ -1,0 +1,619 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+	<head th:replace="common/head :: commonHead(~{::title}, ~{::link})">
+		<title>接入指南 - 可信验</title>
+		<link href="css/common/markdown.css" rel="stylesheet">
+		<link href="css/common/imgModal.css" rel="stylesheet">
+		<link href="css/dev-center/common.css" rel="stylesheet">
+	</head>
+	<body>
+		<div th:replace="common/header :: globalHeader"></div>
+		
+		<div class="jumbotron verifyMainContent">
+			<div class="container">
+				<div class="devCenterBox">
+					<div id="guideBox" class="guideBox">
+						<h4 class="pageTitle">
+							<span>
+								<i class="glyphicon glyphicon-hand-right"></i>
+								接入指南
+							</span>
+						</h4>
+						<div class="col-md-3 menu_content" id="guideMenu">
+							<ul class="menu_list menu_list_1">
+								<li class="menu_item menu_item_1">
+									<a href="javascript: void(0);" data-anchor-point="#menu_link_1" class="menu_link menu_link_1 current"><i class="glyphicon glyphicon-triangle-bottom"></i>基本配置</a>
+									<ul class="menu_list menu_list_2">
+										<li class="menu_item menu_item_2">
+											<a href="javascript: void(0);" data-anchor-point="#menu_link_1_1" class="menu_link menu_link_2"><i class="glyphicon glyphicon-triangle-bottom"></i>添加网站</a>
+											<ul class="menu_list menu_list_3">
+												<li class="menu_item menu_item_3 list_item">
+													<a href="javascript: void(0);" data-anchor-point="#menu_link_1_1_1" class="menu_link menu_link_3"><i class=""></i>填写说明</a>
+												</li>
+											</ul>
+										</li>
+										<li class="menu_item menu_item_2 list_item">
+											<a href="javascript: void(0);" data-anchor-point="#menu_link_1_2" class="menu_link menu_link_2"><i class=""></i>获取webKey和apiKey</a>
+										</li>
+									</ul>
+								</li>
+								<li class="menu_item menu_item_1">
+									<a href="javascript: void(0);" data-anchor-point="#menu_link_2" class="menu_link menu_link_1"><i class="glyphicon glyphicon-triangle-bottom"></i>应用平台Web端配置</a>
+									<ul class="menu_list menu_list_2">
+										<li class="menu_item menu_item_2">
+											<a href="javascript: void(0);" data-anchor-point="#menu_link_2_1" class="menu_link menu_link_2"><i class="glyphicon glyphicon-triangle-bottom"></i>VUE接入</a>
+											<ul class="menu_list menu_list_3">
+												<li class="menu_item menu_item_3 list_item">
+													<a href="javascript: void(0);" data-anchor-point="#menu_link_2_1_1" class="menu_link menu_link_3"><i class=""></i>安装</a>
+												</li>
+												<li class="menu_item menu_item_3 list_item">
+													<a href="javascript: void(0);" data-anchor-point="#menu_link_2_1_2" class="menu_link menu_link_3"><i class=""></i>使用</a>
+												</li>
+												<li class="menu_item menu_item_3 list_item">
+													<a href="javascript: void(0);" data-anchor-point="#menu_link_2_1_3" class="menu_link menu_link_3"><i class=""></i>参数</a>
+												</li>
+												<li class="menu_item menu_item_3 list_item">
+													<a href="javascript: void(0);" data-anchor-point="#menu_link_2_1_4" class="menu_link menu_link_3"><i class=""></i>方法</a>
+												</li>
+												<li class="menu_item menu_item_3 list_item">
+													<a href="javascript: void(0);" data-anchor-point="#menu_link_2_1_5" class="menu_link menu_link_3"><i class=""></i>回调方法</a>
+												</li>
+											</ul>
+										</li>
+										<li class="menu_item menu_item_2">
+											<a href="javascript: void(0);" data-anchor-point="#menu_link_2_2" class="menu_link menu_link_2"><i class="glyphicon glyphicon-triangle-bottom"></i>JS接入</a>
+											<ul class="menu_list menu_list_3">
+												<li class="menu_item menu_item_3 list_item">
+													<a href="javascript: void(0);" data-anchor-point="#menu_link_2_2_1" class="menu_link menu_link_3"><i class=""></i>使用</a>
+												</li>
+												<li class="menu_item menu_item_3 list_item">
+													<a href="javascript: void(0);" data-anchor-point="#menu_link_2_2_2" class="menu_link menu_link_3"><i class=""></i>参数</a>
+												</li>
+												<li class="menu_item menu_item_3 list_item">
+													<a href="javascript: void(0);" data-anchor-point="#menu_link_2_2_3" class="menu_link menu_link_3"><i class=""></i>方法</a>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li class="menu_item menu_item_1">
+									<a href="javascript: void(0);" data-anchor-point="#menu_link_3" class="menu_link menu_link_1"><i class="glyphicon glyphicon-triangle-bottom"></i>应用平台服务端配置</a>
+									<ul class="menu_list menu_list_2">
+										<li class="menu_item menu_item_2 list_item">
+											<a href="javascript: void(0);" data-anchor-point="#menu_link_3_1" class="menu_link menu_link_2"><i class=""></i>接口地址</a>
+										</li>
+										<li class="menu_item menu_item_2">
+											<a href="javascript: void(0);" data-anchor-point="#menu_link_3_2" class="menu_link menu_link_2"><i class="glyphicon glyphicon-triangle-bottom"></i>接口参数</a>
+											<ul class="menu_list menu_list_3">
+												<li class="menu_item menu_item_3 list_item">
+													<a href="javascript: void(0);" data-anchor-point="#menu_link_3_2_1" class="menu_link menu_link_3"><i class=""></i>返回码说明</a>
+												</li>
+												<li class="menu_item menu_item_3 list_item">
+													<a href="javascript: void(0);" data-anchor-point="#menu_link_3_2_2" class="menu_link menu_link_3"><i class=""></i>验证结果说明</a>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+						<div class="col-md-12 markdown-body guide_content" id="guideDisplay">
+							<h3 id="menu_link_1" class="content_anchor_point">基本配置</h3>
+							<h4 id="menu_link_1_1" class="content_anchor_point">添加网站</h4>
+							<p>点击平台顶部导航栏的<a href="website/new">添加网站</a>，填写网站信息及验证码属性，如下图</p>
+							<p><img src="images/dev-center/newWebsite.png" alt="添加网站"></p>
+							<h5 id="menu_link_1_1_1" class="content_anchor_point">填写说明</h5>
+							<ol>
+								<li><p>网站地址支持精确与模糊匹配，精确匹配示例：www.cloudcrowd.com.cn；模糊匹配示例：*.cloudcrowd.com.cn</p></li>
+								<li><p>可根据喜好选择不同的主题图库，默认图库为：综合</p></li>
+								<li><p>可根据网站所需验证码大小，选择缩放比例，主题图片默认缩放比例为：1.5倍</p></li>
+							</ol>
+							<table>
+								<thead>
+									<tr>
+										<th style="text-align:center;">缩放比例</th>
+										<th style="text-align:center;">图片尺寸</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="text-align:center;">0.8倍</td>
+										<td style="text-align:center;">240px*128px</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">0.9倍</td>
+										<td style="text-align:center;">270px*144px</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">1.0倍</td>
+										<td style="text-align:center;">300px*160px</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">1.1倍</td>
+										<td style="text-align:center;">330px*176px</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">1.2倍</td>
+										<td style="text-align:center;">360px*192px</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">1.3倍</td>
+										<td style="text-align:center;">390px*208px</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">1.4倍</td>
+										<td style="text-align:center;">420px*224px</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">1.5倍</td>
+										<td style="text-align:center;">450px*240px</td>
+										</tr>
+									</tbody>
+								</table>
+								<ol start="4"><li>可根据喜好选择验证模式，目前支持拖拽验证和点击验证</li></ol>
+								<blockquote><p>拖拽验证</p></blockquote>
+								<p><img src="images/main/demo/dragVerify1.png" alt="拖拽验证"></p>
+								<blockquote><p>点击验证</p></blockquote>
+								<p><img src="images/main/demo/clickVerify1.png" alt="点击验证"></p>
+								<ol start="5"><li>可根据网站安全要求选择安全级别，目前支持点击验证三级安全级别：低级、中级、高级</li></ol>
+								<h4 id="menu_link_1_2" class="content_anchor_point">获取webKey和apiKey</h4>
+								<p>网站创建成功可在我的网站及网站详情查看webKey与apiKey，其中为确保apiKey的安全性，默认隐藏apiKey，输入登录密码即可查看</p>
+								<blockquote><p>我的网站</p></blockquote>
+								<p><img src="images/dev-center/myWebsite.png" alt="我的网站"></p>
+								<blockquote><p>网站详情</p></blockquote>
+								<p><img src="images/dev-center/detailWebsite.png" alt="网站详情"></p>
+								<blockquote><p>确认密码（点击橙色眼睛icon）</p></blockquote>
+								<p><img src="images/dev-center/confirmPwd.png" alt="确认密码"></p>
+								<h3 id="menu_link_2" class="content_anchor_point">应用平台Web端配置</h3>
+								<h4 id="menu_link_2_1" class="content_anchor_point">VUE接入</h4>
+								<h5 id="menu_link_2_1_1" class="content_anchor_point">安装</h5>
+<pre><code class="bash language-bash">npm install vue-graphic-verify --save</code></pre>
+								<h5 id="menu_link_2_1_2" class="content_anchor_point">使用</h5>
+								<blockquote><p>全局应用</p></blockquote>
+								<p>main.js</p>
+<pre><code class="bash language-bash">import Vue from 'vue'
+import {GVerifyPlugin} from 'vue-graphic-verify'
+
+Vue.use(GVerifyPlugin, {
+  apiAddr: 'https://verify.cloudcrowd.com.cn',
+  webKey: 'b8db153be64749796ab48a61ebcf7a1c',
+  verifyWidth: 300
+})</code></pre>
+								<p>templete file</p>
+<pre><code class="bash language-bash">&lt;template&gt;
+  &lt;graphic-verify :webKey="webKey" :verifyWidth="verifyWidth"&gt;&lt;/graphic-verify&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+  export default {
+    name: 'app',
+    data () {
+      return {
+        webKey: 'b8db153be64749796ab48a61ebcf7a1c',
+        verifyWidth: '450'
+      }
+    }
+  }
+&lt;/script&gt;</code></pre>
+								<blockquote><p>局部应用</p></blockquote>
+								<p>templete file</p>
+<pre><code class="bash language-bash">&lt;template&gt;
+  &lt;g-verify :webKey="webKey" :verifyWidth="verifyWidth"&gt;&lt;/g-verify&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+  import gVerify from 'vue-graphic-verify'
+
+  export default {
+    name: 'app',
+    data () {
+      return {
+        webKey: 'b8db153be64749796ab48a61ebcf7a1c',
+        verifyWidth: '450'
+      }
+    },
+    components:{
+      gVerify
+    }
+  }
+&lt;/script&gt;</code></pre>
+								<blockquote><p>获取验证成功结果</p></blockquote>
+<pre><code class="bash language-bash">&lt;template&gt;
+  &lt;graphic-verify :webKey="webKey" :verifyWidth="verifyWidth" @verify-callback="recordToken"&gt;&lt;/graphic-verify&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+  export default {
+    name: 'app',
+    data () {
+      return {
+        webKey: 'b8db153be64749796ab48a61ebcf7a1c',
+        verifyWidth: '450',
+        verifyToken: null
+      }
+    },
+    methods: {
+      recordToken (token) {
+        this.verifyToken = token
+      }
+    }
+  }
+&lt;/script&gt;</code></pre>
+								<blockquote><p>重置验证码</p></blockquote>
+<pre><code class="bash language-bash">&lt;template&gt;
+  &lt;div&gt;
+    &lt;graphic-verify ref="gVerifyBtn" :webKey="webKey" :verifyWidth="verifyWidth"&gt;&lt;/graphic-verify&gt;
+    &lt;button @click.prevent="reset"&gt;重置&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+  export default {
+    name: 'app',
+    data () {
+      return {
+        webKey: 'b8db153be64749796ab48a61ebcf7a1c',
+        verifyWidth: '450'
+      }
+    },
+    methods: {
+      reset () {
+        this.$refs.gVerifyBtn.reset()
+      }
+    }
+  }
+&lt;/script&gt;</code></pre>
+								<h5 id="menu_link_2_1_3" class="content_anchor_point">参数</h5>
+								<table>
+									<thead>
+										<tr>
+											<th style="text-align:center;">参数名称</th>
+										<th style="text-align:center;">数据类型</th>
+										<th style="text-align:center;">默认值</th>
+										<th style="text-align:center;">参数说明</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="text-align:center;">webKey</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">-</td>
+										<td style="text-align:center;">webKey</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">verifyWidth</td>
+										<td style="text-align:center;">String, Number</td>
+										<td style="text-align:center;">主题图片宽度</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>按钮宽度</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">border</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">1px solid rgba(51, 51, 51, 0.25)</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>按钮border样式</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">borderRadius</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">4px</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>按钮border圆角</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">bgColor</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">rgba(255, 255, 255, 0.9)</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>按钮底色</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">color</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">#333333</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>按钮字体颜色</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">successColor</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">#1ca21c</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>验证成功颜色</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">failureColor</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">#dd1010</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>验证失败颜色</td>
+									</tr>
+								</tbody>
+							</table>
+							<h5 id="menu_link_2_1_4" class="content_anchor_point">方法</h5>
+							<table>
+								<thead>
+									<tr>
+										<th style="text-align:center;">方法名称</th>
+										<th style="text-align:center;">入参</th>
+										<th style="text-align:center;">方法说明</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="text-align:center;">reset()</td>
+										<td style="text-align:center;">-</td>
+										<td style="text-align:center;">重置<code>GraphicVerify</code></td>
+									</tr>
+								</tbody>
+							</table>
+							<h5 id="menu_link_2_1_5" class="content_anchor_point">回调方法</h5>
+							<table>
+								<thead>
+									<tr>
+										<th style="text-align:center;">方法名称</th>
+										<th style="text-align:center;">出参</th>
+										<th style="text-align:center;">方法说明</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="text-align:center;">verify-callback</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">返回<code>GraphicVerify</code>验证成功token</td>
+										</tr>
+									</tbody>
+								</table>
+								<h4 id="menu_link_2_2" class="content_anchor_point">JS接入</h4>
+								<h5 id="menu_link_2_2_1" class="content_anchor_point">使用</h5>
+								<blockquote><p>引入插件和样式</p></blockquote>
+								<p>html</p>
+<pre><code class="bash language-bash">&lt;html&gt;
+  &lt;head&gt;
+    &lt;link rel="stylesheet" type="text/css" href="https://verify.cloudcrowd.com.cn/verify.css"&gt;
+    &lt;script type="text/javascript" src="https://verify.cloudcrowd.com.cn/verify.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div id="gVerify"&gt;&lt;/div&gt;
+    
+    &lt;script type="text/javascript"&gt;
+      var gv = new GraphicVerify({
+        webKey: "b8db153be64749796ab48a61ebcf7a1c",
+        container: "#gVerify"
+      });
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+								<blockquote><p>获取验证成功结果</p></blockquote>
+<pre><code class="bash language-bash">&lt;html&gt;
+  &lt;head&gt;
+    &lt;link rel="stylesheet" type="text/css" href="https://verify.cloudcrowd.com.cn/verify.css"&gt;
+    &lt;script type="text/javascript" src="https://verify.cloudcrowd.com.cn/verify.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div id="gVerify"&gt;&lt;/div&gt;
+    &lt;button id="checkTokenBtn" onclick="checkToken" disabled&gt;验证token&lt;/button&gt;
+    
+    &lt;script type="text/javascript"&gt;
+      var gv = new GraphicVerify({
+        webKey: "b8db153be64749796ab48a61ebcf7a1c",
+        container: "#gVerify",
+        successCallback: enableCheckButton
+      });
+      
+      function enableCheckButton() {
+        if (gv .verifyResult) {
+          document.getElementById("checkTokenBtn").disabled = "";
+        }
+      }
+      
+      function checkToken () {
+        var token = gv.verifyResult;
+        # do check token...
+      }
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+								<blockquote><p>重置验证码</p></blockquote>
+<pre><code class="bash language-bash">&lt;html&gt;
+  &lt;head&gt;
+    &lt;link rel="stylesheet" type="text/css" href="https://verify.cloudcrowd.com.cn/verify.css"&gt;
+    &lt;script type="text/javascript" src="https://verify.cloudcrowd.com.cn/verify.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div id="gVerify"&gt;&lt;/div&gt;
+    &lt;button onclick="reset"&gt;重置&lt;/button&gt;
+    
+    &lt;script type="text/javascript"&gt;
+      var gv = new GraphicVerify({
+        webKey: "b8db153be64749796ab48a61ebcf7a1c",
+        container: "#gVerify"
+      });
+      
+      function reset () {
+        gv.reset();
+      }
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+								<h5 id="menu_link_2_2_2" class="content_anchor_point">参数</h5>
+								<table>
+									<thead>
+										<tr>
+											<th style="text-align:center;">参数名称</th>
+										<th style="text-align:center;">数据类型</th>
+										<th style="text-align:center;">默认值</th>
+										<th style="text-align:center;">参数说明</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="text-align:center;">webKey</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">-</td>
+										<td style="text-align:center;">webKey</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">verifyWidth</td>
+										<td style="text-align:center;">String, Number</td>
+										<td style="text-align:center;">主题图片宽度</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>按钮宽度</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">border</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">1px solid rgba(51, 51, 51, 0.25)</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>按钮border样式</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">borderRadius</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">4px</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>按钮border圆角</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">bgColor</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">rgba(255, 255, 255, 0.9)</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>按钮底色</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">color</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">#333333</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>按钮字体颜色</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">successColor</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">#1ca21c</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>验证成功颜色</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">failureColor</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">#dd1010</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>验证失败颜色</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">successCallback</td>
+										<td style="text-align:center;">fn</td>
+										<td style="text-align:center;">null</td>
+										<td style="text-align:center;"><code>GraphicVerify</code>验证成功回调方法</td>
+									</tr>
+								</tbody>
+							</table>
+							<h5 id="menu_link_2_2_3" class="content_anchor_point">方法</h5>
+							<table>
+								<thead>
+									<tr>
+										<th style="text-align:center;">方法名称</th>
+										<th style="text-align:center;">入参</th>
+										<th style="text-align:center;">方法说明</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="text-align:center;">reset()</td>
+										<td style="text-align:center;">-</td>
+										<td style="text-align:center;">reset the<code>GraphicVerify</code></td>
+									</tr>
+								</tbody>
+							</table>
+							<h3 id="menu_link_3" class="content_anchor_point">应用平台服务端配置</h3>
+							<h4 id="menu_link_3_1" class="content_anchor_point">接口地址</h4>
+							<pre><code>POST:https://verify.cloudcrowd.com.cn/verify/verifyToken</code></pre>
+							<h4 id="menu_link_3_2" class="content_anchor_point">接口参数</h4>
+							<table>
+								<thead>
+									<tr>
+										<th style="text-align:center;">参数名称</th>
+										<th style="text-align:center;">参数类型</th>
+										<th style="text-align:center;">数据类型</th>
+										<th style="text-align:center;">参数说明</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="text-align:center;">apiKey</td>
+										<td style="text-align:center;">入参</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">apiKey</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">token</td>
+										<td style="text-align:center;">入参</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">验证码验证成功token</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">httpCode</td>
+										<td style="text-align:center;">出参</td>
+										<td style="text-align:center;">Integer</td>
+										<td style="text-align:center;">返回码</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">msg</td>
+										<td style="text-align:center;">出参</td>
+										<td style="text-align:center;">String</td>
+										<td style="text-align:center;">返回信息</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">success</td>
+										<td style="text-align:center;">出参</td>
+										<td style="text-align:center;">Boolean</td>
+										<td style="text-align:center;">验证结果</td>
+									</tr>
+								</tbody>
+							</table>
+							<h5 id="menu_link_3_2_1" class="content_anchor_point">返回码说明</h5>
+							<table>
+								<thead>
+									<tr>
+										<th style="text-align:center;">httpCode</th>
+										<th style="text-align:center;">数值说明</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="text-align:center;">200</td>
+										<td style="text-align:center;">请求成功</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">400</td>
+										<td style="text-align:center;">请求参数错误</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">500</td>
+										<td style="text-align:center;">服务器出错</td>
+									</tr>
+								</tbody>
+							</table>
+							<h5 id="menu_link_3_2_2" class="content_anchor_point">验证结果说明</h5>
+							<table>
+								<thead>
+									<tr>
+										<th style="text-align:center;">success</th>
+										<th style="text-align:center;">结果说明</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="text-align:center;">true</td>
+										<td style="text-align:center;">验证通过</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;">false</td>
+										<td style="text-align:center;">验证失败</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div th:replace="common/popup :: imgFullViewer('#guideDisplay img')"></div>
+		<div th:replace="common/footer :: globalFooter"></div>
+		
+		<div th:replace="common/script :: commonScript(~{::script})">
+			<script src="js/common/imgModal.js"></script>
+			<script src="js/dev-center/guide.js"></script>
+		</div>
+	</body>
+</html>
