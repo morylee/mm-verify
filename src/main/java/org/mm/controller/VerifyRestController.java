@@ -43,8 +43,8 @@ public class VerifyRestController extends BaseRestController {
 		String webKey = (String) params.get("webKey");
 		Website website = websiteService.findByWebKey(webKey);
 		if (website != null) {
-			modelMap.put("width", CaptchaUtil.DEFAULT_WIDTH * website.getScalingRatio());
-			modelMap.put("height", CaptchaUtil.DEFAULT_HEIGHT * website.getScalingRatio());
+			modelMap.put("width", CaptchaUtil.DEFAULT_WIDTH * website.getScalingRatio() / CaptchaUtil.BACKGROUND_RESIZE);
+			modelMap.put("height", CaptchaUtil.DEFAULT_HEIGHT * website.getScalingRatio() / CaptchaUtil.BACKGROUND_RESIZE);
 		} else {
 			throw new NotFoundException("无效的WebKey");
 		}

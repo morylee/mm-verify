@@ -1,6 +1,8 @@
 package org.mm.core.captcha;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,35 +12,37 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import net.coobird.thumbnailator.Thumbnails;
 import org.mm.core.util.ArrayUtil;
 import org.mm.core.util.ImageUtil;
 import org.mm.core.util.RandomUtil;
 
 public class ClickCaptchaUtil {
 
-	private static final int ICON_WIDTH = 30;
-	private static final int ICON_HEIGHT = 30;
-	private static final int ICON_X_PADDING = 45;
-	private static final int ICON_Y_PADDING = 45;
-	
+	private static final int ICON_WIDTH = 30 * CaptchaUtil.BACKGROUND_RESIZE;
+	private static final int ICON_HEIGHT = 30 * CaptchaUtil.BACKGROUND_RESIZE;
+	private static final int ICON_X_PADDING = 40 * CaptchaUtil.BACKGROUND_RESIZE;
+	private static final int ICON_Y_PADDING = 40 * CaptchaUtil.BACKGROUND_RESIZE;
+	private static final int WHITE_COLOR_NUM = 192;
+	private static final int ICON_TO_BACKGROUND_BORDER = 10 * CaptchaUtil.BACKGROUND_RESIZE;
+	private static final int MAX_OPERATE_TIMES = 3;
+
 	public static final int getIconWidth() {
-		return ICON_WIDTH;
+		return ICON_WIDTH / CaptchaUtil.BACKGROUND_RESIZE;
 	}
 	
 	public static final int getIconHeight() {
-		return ICON_HEIGHT;
+		return ICON_HEIGHT / CaptchaUtil.BACKGROUND_RESIZE;
 	}
-	
+
 	enum Icon {
-		Star(0, 0, "星星", "/images/starIcon.png"), Triangle(1, 0, "三角", "/images/triangleIcon.png"),
-		Square(2, 0, "方形", "/images/squareIcon.png"), Circular(3, 0, "圆形", "/images/circularIcon.png"),
-		Cloud(4, 0, "云朵", "/images/cloudIcon.png"), Rhombus(5, 0, "菱形", "/images/rhombusIcon.png"),
-		Heart(6, 0, "心形", "/images/heartIcon.png"),
-		AstonishedFace(100, 1, "惊讶", "/images/astonishedFace.png"), BlowAKiss(101, 1, "飞吻", "/images/blowAKiss.png"),
-		ColdSweat(102, 1, "冷汗", "/images/coldSweat.png"), ConfusedFace(103, 1, "困扰", "/images/confusedFace.png"),
-		HeartShapedEyes(104, 1, "花痴", "/images/heartShapedEyes.png"), Laughter(105, 1, "大笑", "/images/laughter.png"),
-		Smile(106, 1, "微笑", "/images/smile.png"), StuckOutTongue(107, 1, "吐舌", "/images/stuckOutTongue.png"),
-		TearsOfJoy(108, 1, "笑哭", "/images/tearsOfJoy.png"), ZipperMouth(109, 1, "闭嘴", "/images/zipperMouth.png");
+		/** icons */
+		Circular(0, 0, "圆形", "/images/circularIcon.png"), Cloud(1, 0, "云朵", "/images/cloudIcon.png"),
+		Heart(2, 0, "心形", "/images/heartIcon.png"), Hexagon(3, 0, "六边形", "/images/hexagonIcon.png"),
+		Lighting(4, 0, "闪电", "/images/lightingIcon.png"), Moon(5, 0, "月亮", "/images/moonIcon.png"),
+		Pentagon(6, 0, "五边形", "/images/pentagonIcon.png"), Square(7, 0, "方形", "/images/squareIcon.png"),
+		Star(8, 0, "星星", "/images/starIcon.png"), Sun(9, 0, "太阳", "/images/sunIcon.png"),
+		Triangle(10, 0, "三角", "/images/triangleIcon.png");
 		
 		int value;
 		int type;
@@ -55,53 +59,37 @@ public class ClickCaptchaUtil {
 		public static Icon valueOf(int value) {
 			switch (value) {
 				case 1:
-					return Triangle;
-				case 2:
-					return Square;
-				case 3:
-					return Circular;
-				case 4:
 					return Cloud;
-				case 5:
-					return Rhombus;
-				case 6:
+				case 2:
 					return Heart;
-				case 100:
-					return AstonishedFace;
-				case 101:
-					return BlowAKiss;
-				case 102:
-					return ColdSweat;
-				case 103:
-					return ConfusedFace;
-				case 104:
-					return HeartShapedEyes;
-				case 105:
-					return Laughter;
-				case 106:
-					return Smile;
-				case 107:
-					return StuckOutTongue;
-				case 108:
-					return TearsOfJoy;
-				case 109:
-					return ZipperMouth;
-				default:
+				case 3:
+					return Hexagon;
+				case 4:
+					return Lighting;
+				case 5:
+					return Moon;
+				case 6:
+					return Pentagon;
+				case 7:
+					return Square;
+				case 8:
 					return Star;
+				case 9:
+					return Sun;
+				case 10:
+					return Triangle;
+				default:
+					return Circular;
 			}
 		}
 		
 		public final static List<Icon> shape = new ArrayList<>();
-		public final static List<Icon> emoji = new ArrayList<>();
-		
+
 		static {
 			for (Icon icon: Icon.values()) {
 				switch(icon.type) {
 				case 0:
 					shape.add(icon);
-					break;
-				case 1:
-					emoji.add(icon);
 					break;
 				default:
 					break;
@@ -109,26 +97,57 @@ public class ClickCaptchaUtil {
 			}
 		}
 	}
+
+	public static boolean isWhite(int r, int g, int b) {
+		return colorNum(r, g, b) >= WHITE_COLOR_NUM;
+	}
+
+	public static int colorNum(int r, int g, int b) {
+		return (int) (r * 0.299 + g * 0.587 + b * 0.114);
+	}
 	
+	public static final int TRANSPARENT = new Color(0f, 0f, 0f, 0f).getRGB();
+
 	public static void drawImg(BufferedImage oriImage, BufferedImage[] icons, Integer[][] posXY) {
 		if (posXY == null || posXY.length != icons.length) {
 			throw new RuntimeException("positions size not equal icons size");
 		}
 		
 		BufferedImage icon;
-		int w, h, x, y, rgbIcon;
+		int iconSize, w, h, x, y, rgbIcon, rIcon, gIcon, bIcon, rgbBg, rBg, gBg, bBg, color;
 		for (int iconInd = 0; iconInd < icons.length; iconInd++) {
 			icon = icons[iconInd];
 			w = posXY[iconInd][0];
 			h = posXY[iconInd][1];
-			for (int i = 0; i < icon.getWidth(); i++) {
-				for (int j = 0; j < icon.getHeight(); j++) {
+			posXY[iconInd][0] /= CaptchaUtil.BACKGROUND_RESIZE;
+			posXY[iconInd][1] /= CaptchaUtil.BACKGROUND_RESIZE;
+			iconSize = icon.getWidth() > icon.getHeight() ? icon.getHeight() : icon.getWidth();
+			for (int i = 0; i < iconSize; i++) {
+				for (int j = 0; j < iconSize; j++) {
+					if (iconSize * iconSize < (2 * i - iconSize) * (2 * i - iconSize) + (2 * j - iconSize) * (2 * j - iconSize)) {
+						continue;
+					}
+
 					x = w + i;
 					y = h + j;
 					rgbIcon = icon.getRGB(i, j);
-					if ((rgbIcon & 0xFF000000) < 0) {
-						oriImage.setRGB(x, y, rgbIcon);
+					rIcon = (rgbIcon & 0xff0000) >> 16;
+					gIcon = (rgbIcon & 0xff00) >> 8;
+					bIcon = (rgbIcon & 0xff);
+
+					rgbBg = oriImage.getRGB(x, y);
+					rBg = (rgbBg & 0xff0000) >> 16;
+					gBg = (rgbBg & 0xff00) >> 8;
+					bBg = (rgbBg & 0xff);
+
+					if (rIcon == 255 && gIcon == 255 && bIcon == 255) {
+						color = ((0xFF << 24) | (RandomUtil.randomInt(220, 255) << 16) | (RandomUtil.randomInt(220, 255) << 8) | RandomUtil.randomInt(220, 255));
+					} else {
+						color = isWhite(rBg, gBg, bBg) ? WHITE_COLOR_NUM - 30 : WHITE_COLOR_NUM + 30;
+						color = ((0xFF << 24) | (((rBg + color) / 2) << 16) | (((gBg + color) / 2) << 8) | ((bBg + color) / 2));
 					}
+
+					oriImage.setRGB(x, y, color);
 				}
 			}
 		}
@@ -147,8 +166,8 @@ public class ClickCaptchaUtil {
 		for (int i = 0; i < n; i++) {
 			do {
 				tooClose = false;
-				posX = RandomUtil.randomInt(10, w - 10 - ICON_WIDTH);
-				posY = RandomUtil.randomInt(10, h - 10 - ICON_HEIGHT);
+				posX = RandomUtil.randomInt(ICON_TO_BACKGROUND_BORDER, w - ICON_TO_BACKGROUND_BORDER - ICON_WIDTH);
+				posY = RandomUtil.randomInt(ICON_TO_BACKGROUND_BORDER, h - ICON_TO_BACKGROUND_BORDER - ICON_HEIGHT);
 				for (int j = 0; j < positions.length; j++) {
 					position = positions[j];
 					px = position[0] == null ? 0 : position[0];
@@ -174,10 +193,6 @@ public class ClickCaptchaUtil {
 		List<Icon> iconList;
 		int baseNum;
 		switch (type) {
-		case 1:
-			iconList = Icon.emoji;
-			baseNum = 100;
-			break;
 		default:
 			iconList = Icon.shape;
 			baseNum = 0;
@@ -219,29 +234,32 @@ public class ClickCaptchaUtil {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			BufferedImage bufferedImage = ImageIO.read(new FileInputStream(url));
-			
-			Icon[] icons = getIcons(n, iconType);
-			n = icons.length;
-			BufferedImage[] iconImgs = new BufferedImage[n];
+
+			Icon[] icons = getIcons(MAX_OPERATE_TIMES, iconType);
+			if (n > MAX_OPERATE_TIMES) n = MAX_OPERATE_TIMES;
+			BufferedImage[] iconImgs = new BufferedImage[MAX_OPERATE_TIMES];
 			StringBuffer sb = new StringBuffer();
 			sb.append("请依次点击：");
 			Icon icon;
-			for (int i = 0; i < n; i++) {
+			for (int i = 0; i < MAX_OPERATE_TIMES; i++) {
 				icon = icons[i];
 				iconImgs[i] = getIconImage(icon);
-				sb.append(icon.name);
+				if (i < n) sb.append(icon.name);
 				if (i < n - 1) sb.append("，");
 			}
-			Integer[][] posXY = getPositions(bufferedImage.getWidth(), bufferedImage.getHeight(), n);
+			Integer[][] posXY = getPositions(bufferedImage.getWidth(), bufferedImage.getHeight(), MAX_OPERATE_TIMES);
 			drawImg(bufferedImage, iconImgs, posXY);
+			bufferedImage = Thumbnails.of(bufferedImage).scale(1.0 / CaptchaUtil.BACKGROUND_RESIZE).asBufferedImage();
 			
 			resultMap.put("background", bufferedImage); // 主图
 			if (posXY == null || posXY.length != iconImgs.length) {
 				throw new RuntimeException("draw image falied");
 			} else {
 				resultMap.put("guide", sb.toString());  // 操作提示
-				resultMap.put("times", posXY.length);   // 操作次数
-				resultMap.put("positions", posXY);      // icon在主图的坐标
+				resultMap.put("times", n);              // 操作次数
+				Integer[][] realPosXY = new Integer[n][];
+				System.arraycopy(posXY, 0, realPosXY, 0, n);
+				resultMap.put("positions", realPosXY);  // icon在主图的坐标
 			}
 		} catch (IOException e) {
 			resultMap.clear();

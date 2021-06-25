@@ -51,6 +51,7 @@ public class ImageUtil {
 	}
 
 	enum Policy {
+		/***/
 		Scaled(0), CropAtTop(1), CropAtCenter(2), CropAtBottom(3);
 		int value;
 

@@ -42,9 +42,10 @@ public class CaptchaUtil {
 	private static String BASE_THEME;                              // 主题
 	private static String BASE_BACKGROUND;                         // 图片文件名
 	private static String BASE_IMG_TYPE;                           // 图片格式
-	
-	public static final Integer DEFAULT_WIDTH = 300;               // 图片默认宽度
-	public static final Integer DEFAULT_HEIGHT = 160;              // 图片默认高度
+
+	public static final Integer BACKGROUND_RESIZE = 5;
+	public static final Integer DEFAULT_WIDTH = 300 * BACKGROUND_RESIZE;  // 图片默认宽度
+	public static final Integer DEFAULT_HEIGHT = 160 * BACKGROUND_RESIZE; // 图片默认高度
 	private static final Integer DEFAULT_TIMES = 3;                // 用户操作次数
 	private static final Integer DEFAULT_V_CUT = 15;               // 纵切次数
 	private static final Integer DEFAULT_H_CUT = 3;                // 横切次数

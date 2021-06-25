@@ -10,26 +10,27 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import net.coobird.thumbnailator.Thumbnails;
 import org.mm.core.util.ArrayUtil;
 import org.mm.core.util.ImageUtil;
 import org.mm.core.util.RandomUtil;
 
 public class DragCaptchaUtil {
 
-	private static final int ICON_WIDTH = 60;
-	private static final int ICON_HEIGHT = 60;
-	private static final int CIRCLE_RADIUS = 7;
-	private static final int RECTANGLE_PADDING = 9;
-	private static final int SLIDER_IMG_OUT_PADDING = 2;
+	private static final int ICON_WIDTH = 60 * CaptchaUtil.BACKGROUND_RESIZE;
+	private static final int ICON_HEIGHT = 60 * CaptchaUtil.BACKGROUND_RESIZE;
+	private static final int CIRCLE_RADIUS = 7 * CaptchaUtil.BACKGROUND_RESIZE;
+	private static final int RECTANGLE_PADDING = 9 * CaptchaUtil.BACKGROUND_RESIZE;
+	private static final int SLIDER_IMG_OUT_PADDING = 2 * CaptchaUtil.BACKGROUND_RESIZE;
 	private static final int TRANSPARENT = new Color(0f, 0f, 0f, 0f).getRGB();
 	private static final int BORDER = new Color(1f, 1f, 1f, 0.5f).getRGB();
 	
 	public static final int getIconWidth() {
-		return ICON_WIDTH;
+		return ICON_WIDTH / CaptchaUtil.BACKGROUND_RESIZE;
 	}
 	
 	public static final int getIconHeight() {
-		return ICON_HEIGHT;
+		return ICON_HEIGHT / CaptchaUtil.BACKGROUND_RESIZE;
 	}
 
 	private static class CutPosParams {
@@ -109,37 +110,47 @@ public class DragCaptchaUtil {
 		//边界阴影
 		for (int i = 0; i < ICON_WIDTH; i++) {
 			for (int j = 0; j < ICON_HEIGHT; j++) {
-				//四个正方形边角处理
-				for (int k = 1; k <= SLIDER_IMG_OUT_PADDING; k++) {
-					//左上、左下
-					if (i >= RECTANGLE_PADDING - k && i < RECTANGLE_PADDING
-							&& ((j >= RECTANGLE_PADDING - k && j < RECTANGLE_PADDING)
-							|| (j >= ICON_HEIGHT - RECTANGLE_PADDING - k && j < ICON_HEIGHT - RECTANGLE_PADDING + 1))) {
-						data[i][j] = 2;
-					}
-
-					//右上、右下
-					if (i >= ICON_WIDTH - RECTANGLE_PADDING + k - 1 && i < ICON_WIDTH - RECTANGLE_PADDING + 1) {
-						for (int n = 1; n <= SLIDER_IMG_OUT_PADDING; n++) {
-							if (((j >= RECTANGLE_PADDING - n && j < RECTANGLE_PADDING)
-									|| (j >= ICON_HEIGHT - RECTANGLE_PADDING - n && j <= ICON_HEIGHT - RECTANGLE_PADDING ))) {
-								data[i][j] = 2;
+				if (data[i][j] == 1) {
+					if (j - SLIDER_IMG_OUT_PADDING > 0) {
+						if (data[i][j - SLIDER_IMG_OUT_PADDING] == 0) {
+							data[i][j - SLIDER_IMG_OUT_PADDING] = 2;
+						}
+						if (i - SLIDER_IMG_OUT_PADDING > 0) {
+							if (data[i - SLIDER_IMG_OUT_PADDING][j - SLIDER_IMG_OUT_PADDING] == 0) {
+								data[i - SLIDER_IMG_OUT_PADDING][j - SLIDER_IMG_OUT_PADDING] = 2;
 							}
 						}
 					}
-				}
-
-				if (data[i][j] == 1 && j - SLIDER_IMG_OUT_PADDING > 0 && data[i][j - SLIDER_IMG_OUT_PADDING] == 0) {
-					data[i][j - SLIDER_IMG_OUT_PADDING] = 2;
-				}
-				if (data[i][j] == 1 && j + SLIDER_IMG_OUT_PADDING > 0 && j + SLIDER_IMG_OUT_PADDING < ICON_HEIGHT && data[i][j + SLIDER_IMG_OUT_PADDING] == 0) {
-					data[i][j + SLIDER_IMG_OUT_PADDING] = 2;
-				}
-				if (data[i][j] == 1 && i - SLIDER_IMG_OUT_PADDING > 0 && data[i - SLIDER_IMG_OUT_PADDING][j] == 0) {
-					data[i - SLIDER_IMG_OUT_PADDING][j] = 2;
-				}
-				if (data[i][j] == 1 && i + SLIDER_IMG_OUT_PADDING > 0 && i + SLIDER_IMG_OUT_PADDING < ICON_WIDTH && data[i + SLIDER_IMG_OUT_PADDING][j] == 0) {
-					data[i + SLIDER_IMG_OUT_PADDING][j] = 2;
+					if (j + SLIDER_IMG_OUT_PADDING < ICON_HEIGHT) {
+						if (data[i][j + SLIDER_IMG_OUT_PADDING] == 0) {
+							data[i][j + SLIDER_IMG_OUT_PADDING] = 2;
+						}
+						if (i + SLIDER_IMG_OUT_PADDING < ICON_HEIGHT) {
+							if (data[i + SLIDER_IMG_OUT_PADDING][j + SLIDER_IMG_OUT_PADDING] == 0) {
+								data[i + SLIDER_IMG_OUT_PADDING][j + SLIDER_IMG_OUT_PADDING] = 2;
+							}
+						}
+					}
+					if (i - SLIDER_IMG_OUT_PADDING > 0) {
+						if (data[i - SLIDER_IMG_OUT_PADDING][j] == 0) {
+							data[i - SLIDER_IMG_OUT_PADDING][j] = 2;
+						}
+						if (j + SLIDER_IMG_OUT_PADDING < ICON_HEIGHT) {
+							if (data[i - SLIDER_IMG_OUT_PADDING][j + SLIDER_IMG_OUT_PADDING] == 0) {
+								data[i - SLIDER_IMG_OUT_PADDING][j + SLIDER_IMG_OUT_PADDING] = 2;
+							}
+						}
+					}
+					if (i + SLIDER_IMG_OUT_PADDING < ICON_WIDTH) {
+						if (data[i + SLIDER_IMG_OUT_PADDING][j] == 0) {
+							data[i + SLIDER_IMG_OUT_PADDING][j] = 2;
+						}
+						if (j - SLIDER_IMG_OUT_PADDING > 0) {
+							if (data[i + SLIDER_IMG_OUT_PADDING][j - SLIDER_IMG_OUT_PADDING] == 0) {
+								data[i + SLIDER_IMG_OUT_PADDING][j - SLIDER_IMG_OUT_PADDING] = 2;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -215,10 +226,12 @@ public class DragCaptchaUtil {
 			CutPosParams params = getCutPosition(bufferedImage.getWidth(), bufferedImage.getHeight());
 			BufferedImage target= new BufferedImage(ICON_WIDTH, ICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 			cutImg(bufferedImage, target, getBlockData(), params.x, params.y);
+			bufferedImage = Thumbnails.of(bufferedImage).scale(1.0 / CaptchaUtil.BACKGROUND_RESIZE).asBufferedImage();
+			target = Thumbnails.of(target).scale(1.0 / CaptchaUtil.BACKGROUND_RESIZE).asBufferedImage();
 			
 			resultMap.put("background", bufferedImage); // 主图
 			resultMap.put("guide", target);             // icon
-			Integer[][] positions = new Integer[][]{{params.x, params.y}};
+			Integer[][] positions = new Integer[][]{{params.x / CaptchaUtil.BACKGROUND_RESIZE, params.y / CaptchaUtil.BACKGROUND_RESIZE}};
 			resultMap.put("positions", positions);      // icon在主图的坐标
 			resultMap.put("times", 1);                  // 操作次数
 		} catch (IOException e) {
