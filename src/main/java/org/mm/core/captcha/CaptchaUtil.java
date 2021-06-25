@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -484,6 +485,7 @@ public class CaptchaUtil {
 							if (!ratioF.exists())
 								raitoPath = ImgCompressUtil.resizeRatio(f.getAbsolutePath(), DEFAULT_WIDTH, DEFAULT_HEIGHT, ratio, raitoPath);
 							bufferedImage = ImageIO.read(new FileInputStream(raitoPath));
+							bufferedImage = Thumbnails.of(bufferedImage).scale(1.0 / CaptchaUtil.BACKGROUND_RESIZE).asBufferedImage();
 							backgrounds.add(ImageUtil.getImageBASE64(bufferedImage));
 						} catch (FileNotFoundException e) {
 							e.printStackTrace();

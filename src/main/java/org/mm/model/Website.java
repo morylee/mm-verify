@@ -14,7 +14,7 @@ public class Website implements Serializable {
 	
 	public static final List<Integer> SEC_MODE_LIST = new ArrayList<>();
 	public static final Integer THEME_NUM_MIN = 0;
-	public static final Integer THEME_NUM_MAX = 6;
+	public static final Integer THEME_NUM_MAX = 7;
 	public static final Double SCALING_RATIO_MIN = 0.8;
 	public static final Double SCALING_RATIO_MAX = 1.5;
 	

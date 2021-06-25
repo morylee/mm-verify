@@ -13,13 +13,14 @@ public class ThemeService {
 	public static final Map<Integer, String> themeMap = new HashMap<>();
 	
 	static {
-		themeMap.put(0, "风景");
-		themeMap.put(1, "动物");
-		themeMap.put(2, "动漫");
+		themeMap.put(0, "综合");
+		themeMap.put(1, "风景");
+		themeMap.put(2, "动物");
 		themeMap.put(3, "科技");
 		themeMap.put(4, "桥梁");
-		themeMap.put(5, "车辆");
-		themeMap.put(6, "综合");
+		themeMap.put(5, "建筑");
+		themeMap.put(6, "美食");
+		themeMap.put(7, "交通");
 	}
 	
 	public List<Map<String, Object>> search() {

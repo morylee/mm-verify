@@ -32,7 +32,7 @@ public class ThemeController extends BaseController {
 		
 		List<String> backgrounds = CaptchaUtil.backgrounds(themeNum, scalingRatio);
 		modelMap.addAttribute("backgrounds", backgrounds);
-		modelMap.addAttribute("themeWidth", CaptchaUtil.DEFAULT_WIDTH * scalingRatio);
+		modelMap.addAttribute("themeWidth", CaptchaUtil.DEFAULT_WIDTH * scalingRatio / CaptchaUtil.BACKGROUND_RESIZE);
 		
 		return "theme/display::themeDisplay";
 	}
